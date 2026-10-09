@@ -1,0 +1,2071 @@
+<meta charset="utf-8">
+<title>Oh Mon Eau Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: full-bleed Geneva photo with a dark-blue gradient veil on the left, header and hero above a row of four glass cards. Each card has one element hanging over its top edge (water orb, cloud/sun, waterfall, parasol). The lake card opens a bottom panel and the photo swaps to the water close-up behind a blur. */
+:root {
+  --ink: #ffffff;
+  --ink-60: rgba(255, 255, 255, 0.62);
+  --sky: #9dc6ff;
+  --navy: #0b2a43;
+  --navy-90: rgba(11, 42, 67, 0.9);
+  --line: rgba(255, 255, 255, 0.5);
+  --chip: rgba(255, 255, 255, 0.2);
+  --well: rgba(0, 0, 0, 0.2);
+  --amber: #e1661e;
+  --amber-line: #ffb76b;
+  --blue: #216ba6;
+  --rain: #c4e2ff;
+  --display: 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  --body: 'Figtree', 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { margin: 0; font: 400 16px/1.4 var(--body); color: var(--ink); background: #0b3a5c; }
+body.panel-open { overflow: hidden; }
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+.ic { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+
+/* ---------- background ---------- */
+.bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #0b3a5c; }
+.bg-stack { position: absolute; inset: -2%; transition: filter 1s ease, transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; background-color: #0b3a5c; animation: kb 40s ease-in-out infinite alternate; }
+.bg-home { background-image: url(img/home.jpg); }
+.bg-water { background-image: url(img/water.jpg); opacity: 0; transition: opacity 1s ease; animation-duration: 55s; }
+@keyframes kb { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.09) translate(-1.2%, -0.8%); } }
+.bg-shade { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.3); transition: background 1s; }
+.cover {
+  position: absolute; inset: 0; width: 62%;
+  background: linear-gradient(90deg, rgba(7, 34, 66, 0.94) 0%, rgba(10, 48, 88, 0.86) 38%, rgba(14, 62, 108, 0.45) 74%, rgba(14, 62, 108, 0) 100%);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 55%, transparent 100%); mask-image: linear-gradient(90deg, #000 0%, #000 55%, transparent 100%);
+  transition: opacity 1s ease;
+}
+body.panel-open .bg-stack { filter: blur(18px) brightness(0.72); transform: scale(1.06); }
+body.panel-open .bg-water { opacity: 1; }
+body.panel-open .cover { opacity: 0; }
+body.panel-open .bg-shade { background: rgba(8, 28, 48, 0.35); }
+
+/* ---------- app shell ---------- */
+.app { position: relative; z-index: 1; max-width: 1440px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 42px); padding-bottom: 48px; transition: opacity 0.7s, filter 0.7s, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
+body.panel-open .app { opacity: 0.35; filter: blur(3px); transform: scale(0.985); pointer-events: none; }
+.reveal { }
+.is-in .reveal { animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(var(--i, 0) * 90ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+/* header */
+.head { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; min-height: 120px; padding-block: 20px; }
+.logo { margin: 0; font: 700 27px/0.92 var(--display); letter-spacing: -0.01em; text-transform: uppercase; color: #fff; user-select: none; }
+.logo span { display: block; }
+.alert {
+  position: relative; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 20px; border: 1px solid var(--amber-line);
+  background: radial-gradient(120% 220% at 0% 0%, rgba(225, 102, 30, 0.62), rgba(251, 172, 96, 0.2) 70%, rgba(255, 183, 107, 0.1));
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); justify-self: center;
+}
+.alert-ic { position: relative; width: 32px; height: 32px; border-radius: 10px; background: var(--amber); display: grid; place-items: center; font-size: 16px; color: #fff; }
+.alert-ic::after { content: ''; position: absolute; inset: 0; border-radius: 10px; border: 2px solid var(--amber-line); animation: ring 3s ease-out 2s infinite; }
+@keyframes ring { 0% { transform: scale(1); opacity: 0.6; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
+.is-in .alert-ic .ic { animation: wiggle 1s 1.4s ease-in-out; transform-origin: 50% 80%; }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(11deg); } 60% { transform: rotate(-7deg); } 80% { transform: rotate(4deg); } }
+.alert b { font: 700 15px/1 var(--body); letter-spacing: -0.02em; white-space: nowrap; }
+.alert .lnk { background: none; border: 0; padding: 4px 0; cursor: pointer; font: 500 14px/1 var(--body); letter-spacing: 0.02em; text-decoration: underline; white-space: nowrap; }
+.alert .lnk:hover { text-decoration-thickness: 2px; }
+.head-r { display: flex; gap: 16px; justify-self: end; flex-wrap: wrap; justify-content: flex-end; }
+.pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; font: 500 15px/1.2 var(--body); cursor: pointer; white-space: nowrap; transition: transform 0.25s, background 0.25s; }
+.pill:hover { transform: translateY(-2px); }
+.pill-glass { background: var(--chip); border: 1px solid var(--chip); color: #fff; }
+.pill-glass:hover { background: rgba(255, 255, 255, 0.3); }
+.pill-white { background: #fff; border: 1px solid #fff; color: var(--navy); }
+.pill-white span { font-weight: 400; }
+.pill-white b { font-weight: 500; }
+
+/* hero */
+.hero { display: flex; flex-direction: column; gap: 12px; padding-block: clamp(28px, 6vh, 64px) clamp(28px, 6vh, 60px); max-width: 700px; }
+.eyebrow { margin: 0; font: 700 13px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--sky); }
+.hero h1 { margin: 0; font: 700 clamp(54px, 8.2vw, 94px)/1.1 var(--display); letter-spacing: -0.04em; text-wrap: balance; }
+.hero .lead { margin: 0; max-width: 640px; font: 500 clamp(19px, 2vw, 24px)/1.32 var(--body); letter-spacing: -0.02em; }
+.hero .src { margin: 0; max-width: 640px; font: 400 14px/1.32 var(--body); letter-spacing: -0.02em; color: #cbd5e1; }
+
+/* card grid */
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) 220px; gap: 24px; margin-top: 56px; }
+.cell { min-width: 0; display: flex; }
+.card { position: relative; isolation: isolate; width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 24px; transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.card:hover { transform: translateY(-5px); }
+.glass {
+  position: absolute; inset: 0; z-index: -1; border-radius: 24px; border: 1px solid var(--line);
+  background: radial-gradient(120% 70% at 0% 0%, rgba(255, 255, 255, 0.22), transparent 62%), rgba(255, 255, 255, 0.07);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: inset -5px -5px 250px rgba(255, 255, 255, 0.02), 0 24px 60px -26px rgba(3, 20, 38, 0.6);
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.card:hover .glass { border-color: rgba(255, 255, 255, 0.9); box-shadow: inset -5px -5px 250px rgba(255, 255, 255, 0.02), 0 34px 70px -26px rgba(3, 20, 38, 0.7); }
+.card[data-open] { cursor: pointer; }
+.fx { position: absolute; inset: 0; z-index: -1; border-radius: 24px; overflow: hidden; container-type: size; pointer-events: none; }
+.hang { position: absolute; z-index: 3; pointer-events: none; }
+
+.title { display: flex; align-items: center; gap: 8px; }
+.ibox { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.1); font-size: 18px; flex: none; }
+.label { font: 700 13px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; }
+.info { display: flex; align-items: center; gap: 12px; }
+.temp { display: flex; align-items: flex-end; gap: 10px; padding-block: 12px; line-height: 1; white-space: nowrap; }
+.temp .n { display: inline-block; min-width: var(--w, 3.4ch); font: 700 52px/1 var(--display); font-variant-numeric: tabular-nums; }
+.temp .u { font: 400 24px/1 var(--display); }
+.rule { width: 1px; align-self: stretch; background: rgba(255, 255, 255, 0.32); flex: none; }
+.place { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.place strong { font: 400 20px/1 var(--body); letter-spacing: -0.02em; }
+.place span { font-size: 14px; letter-spacing: -0.02em; opacity: 0.6; line-height: 1.2; }
+.trend { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 999px; background: #fff; color: #165980; font: 500 14px/1.2 var(--body); }
+.badge { align-self: flex-start; height: 28px; padding-inline: 12px; display: inline-flex; align-items: center; border-radius: 100px; background: var(--chip); font: 500 12px/1 var(--body); letter-spacing: 0.1em; transition: opacity 0.25s; }
+.badge.swap { opacity: 0; }
+.well { position: relative; height: 120px; border-radius: 16px; overflow: hidden; background: var(--well) repeating-linear-gradient(to bottom, transparent 0 29px, rgba(255, 255, 255, 0.09) 29px 30px); }
+.well svg[role="img"] { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.axis { display: flex; justify-content: space-between; margin-top: 8px; font: 500 12px/1 var(--body); letter-spacing: -0.02em; opacity: 0.6; }
+.more { margin-top: auto; display: flex; justify-content: flex-end; padding-top: 4px; }
+.more button { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; cursor: pointer; padding: 4px 0; font: 500 15px/1 var(--body); letter-spacing: 0.02em; }
+.more .ic { font-size: 16px; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.card:hover .more .ic, .more button:focus-visible .ic { transform: translateX(5px); }
+
+/* sparkline */
+.line { fill: none; stroke: #7cc0ff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; }
+.area { fill: url(#sparkFill); }
+.pt { fill: #7cc0ff; transform-box: fill-box; transform-origin: center; }
+.pt.last { fill: #fff; }
+.halo { fill: rgba(255, 255, 255, 0.28); transform-box: fill-box; transform-origin: center; animation: pulse 2.6s ease-out 2s infinite; }
+.is-in .line { animation: draw 1.3s 0.7s cubic-bezier(0.5, 0, 0.2, 1) backwards; }
+.is-in .area { animation: fadein 0.9s 1.4s backwards; }
+.is-in .pt { animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) backwards; animation-delay: calc(0.8s + var(--k, 0) * 0.5s); }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes fadein { from { opacity: 0; } }
+@keyframes pop { from { transform: scale(0); } }
+@keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
+
+/* --- lake: water orb over the edge, bubbles, wave in the chart --- */
+.orb {
+  top: -36px; right: 24px; width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.85); background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 -8px 16px rgba(255, 255, 255, 0.18), 0 10px 24px rgba(4, 24, 46, 0.35);
+  transition: transform 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.card:hover .orb { transform: translateY(5px) scale(1.07); }
+.is-in .orb { animation: dropin 1s cubic-bezier(0.3, 1.5, 0.5, 1) 1s backwards; }
+@keyframes dropin { from { transform: translateY(-40px) scale(0.8); opacity: 0; } }
+.water { position: absolute; inset: 0; --c: #80c9e4; transform: translateY(var(--lvl, 45%)); transition: transform 0.9s cubic-bezier(0.3, 0.9, 0.3, 1); }
+.water .fill { position: absolute; left: 0; right: 0; top: 5px; bottom: -12px; background: var(--c); transition: background 0.9s; }
+.wv { position: absolute; left: 0; top: -9px; width: 200%; height: 14px; fill: var(--c); transition: fill 0.9s; animation: wave var(--wd, 4s) linear infinite; }
+.wv.b { top: -11px; opacity: 0.5; animation-duration: calc(var(--wd, 4s) * 1.7); animation-direction: reverse; }
+@keyframes wave { to { transform: translateX(-50%); } }
+.shine { position: absolute; left: 12px; top: 8px; width: 22px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.55); transform: rotate(-28deg); filter: blur(1px); }
+.bub { position: absolute; bottom: -12px; left: var(--x); width: var(--s); height: var(--s); border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.6); opacity: 0; animation: bubble var(--d) ease-in var(--dl) infinite; }
+@keyframes bubble { 0% { transform: translate(0, 0); opacity: 0; } 12% { opacity: 0.65; } 100% { transform: translate(10px, calc(-100cqh - 20px)); opacity: 0; } }
+.fx.up { -webkit-mask-image: linear-gradient(to top, #000 45%, transparent 95%); mask-image: linear-gradient(to top, #000 45%, transparent 95%); }
+.well-wave { position: absolute; left: 0; bottom: 0; width: 200%; height: 24px; fill: rgba(124, 192, 255, 0.16); animation: wave 9s linear infinite; }
+.well-wave.b { animation-duration: 14s; animation-direction: reverse; fill: rgba(124, 192, 255, 0.1); height: 30px; }
+
+/* --- air: cloud, sun, rain --- */
+.rain { opacity: 0; transition: opacity 0.8s; -webkit-mask-image: linear-gradient(to bottom, #000 52%, transparent 100%); mask-image: linear-gradient(to bottom, #000 52%, transparent 100%); }
+.card[data-weather="rain"] .rain { opacity: 1; }
+.drop { position: absolute; top: 36px; width: 2px; height: var(--h); border-radius: 2px; background: linear-gradient(to bottom, transparent, var(--rain)); opacity: var(--o); animation: fall var(--d) linear var(--dl) infinite; animation-play-state: paused; }
+.card[data-weather="rain"] .drop { animation-play-state: running; }
+@keyframes fall { from { transform: translate(0, 0) rotate(10deg); } to { transform: translate(-70px, 100cqh) rotate(10deg); } }
+.sky { top: 0; right: 18px; width: 0; height: 0; }
+.cloud, .sun { position: absolute; right: 0; transition: transform 0.9s cubic-bezier(0.3, 0.9, 0.3, 1), opacity 0.7s; }
+.cloud { top: -40px; width: 156px; filter: drop-shadow(0 10px 14px rgba(4, 24, 46, 0.35)); }
+.cloud svg { display: block; width: 100%; height: auto; animation: drift 7s ease-in-out infinite; }
+.card:hover .cloud { transform: translateX(-8px) scale(1.05); }
+@keyframes drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-7px, 3px); } }
+.sun { top: -52px; width: 116px; opacity: 0; transform: translateY(46px) scale(0.7); }
+.sun svg { display: block; width: 100%; height: auto; }
+.sun .rays { transform-origin: 60px 60px; animation: spin 26s linear infinite; }
+.sun .core { transform-origin: 60px 60px; animation: breathe 4s ease-in-out infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.card[data-weather="clear"] .cloud { opacity: 0; transform: translate(70px, -24px) scale(0.85); }
+.card[data-weather="clear"] .sun { opacity: 1; transform: none; }
+.card[data-weather="clear"]:hover .sun { transform: scale(1.06); }
+
+/* --- river: waterfall over the edge, flow bars --- */
+.rv-mount { top: -60px; right: 22px; width: 160px; height: 86px; filter: drop-shadow(0 10px 12px rgba(4, 24, 46, 0.35)); --kR: 0.3; --kA: 0.2; --rs: 5s; }
+.rv-mount > svg { position: absolute; left: 0; top: 0; width: 160px; height: 64px; overflow: visible; }
+.rv-peaks { transform-box: fill-box; transform-origin: 50% 100%; transition: transform 0.7s cubic-bezier(0.3, 1.3, 0.5, 1); }
+#riverCard:hover .rv-peaks { transform: scale(1.05, 1.08); }
+.rv-sn { transition: transform 0.7s cubic-bezier(0.3, 1.3, 0.5, 1); transform-box: fill-box; transform-origin: 50% 100%; }
+.rv-glint { animation: rv-twinkle 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes rv-twinkle { 0%, 55%, 100% { opacity: 0; transform: scale(0.3); } 70% { opacity: 1; transform: scale(1); } 85% { opacity: 0; transform: scale(0.5); } }
+.is-in .rv-peaks { animation: rv-rise 1s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.7s backwards; }
+@keyframes rv-rise { from { transform: scaleY(0.3); opacity: 0; } }
+.rv-pool { position: absolute; left: 0; bottom: 0; width: 160px; height: 38px; border-radius: 19px; overflow: hidden; background: linear-gradient(#7cc0ff, #3b8fd6); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6), inset 0 -6px 10px rgba(11, 42, 67, 0.25); transform-origin: 50% 100%; transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.5, 1); }
+#riverCard:hover .rv-pool { transform: scaleY(1.18); }
+.rv-pw { position: absolute; left: 0; width: 200%; fill: var(--c); animation: rv-wave var(--d) linear infinite; animation-duration: calc(var(--d) / var(--boost, 1)); transition: height 0.7s cubic-bezier(0.3, 1.2, 0.5, 1); }
+.rv-pw.rv-b { top: 0; height: calc(12px + var(--kA) * 18px); --c: rgba(255, 255, 255, 0.55); --d: calc(var(--rs) * 1.6); animation-direction: reverse; }
+.rv-pw.rv-f { top: 5px; height: calc(14px + var(--kR) * 22px); --c: rgba(255, 255, 255, 0.9); --d: var(--rs); }
+.rv-pw.rv-l { bottom: 0; top: auto; height: 22px; --c: rgba(24, 96, 170, 0.45); --d: calc(var(--rs) * 1.3); }
+@keyframes rv-wave { to { transform: translateX(-50%); } }
+.rv-spark { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #fff; left: var(--x); top: 10px; opacity: 0; animation: rv-spk 2.8s ease-in-out var(--dl) infinite; }
+@keyframes rv-spk { 0%, 100% { opacity: 0; transform: scale(0.3); } 40% { opacity: 0.95; transform: scale(1); } 70% { opacity: 0; transform: translateY(-3px) scale(0.5); } }
+@media (max-width: 480px) { .rv-mount { transform-origin: 100% 100%; right: 14px; } }
+#riverCard:hover { --boost: 2.2; }
+.is-in .rv-mount { animation: dropin 1s cubic-bezier(0.3, 1.5, 0.5, 1) 1.2s backwards; }
+.river { display: flex; flex-direction: column; gap: 24px; flex: 1; }
+.flow { display: flex; flex-direction: column; gap: 12px; }
+.flow .info .temp { width: 140px; }
+.flow .info .temp .n { --w: 3ch; }
+.flow .nm { font: 400 20px/1 var(--body); letter-spacing: -0.02em; min-width: 0; }
+.flow .meta { margin: 0; font-size: 14px; letter-spacing: -0.02em; opacity: 0.6; }
+.bar { position: relative; height: 6px; border-radius: 6px; background: rgba(255, 255, 255, 0.18); overflow: hidden; }
+.bar i { position: absolute; left: 0; top: 0; bottom: 0; width: var(--p); border-radius: 6px; background: rgba(255, 255, 255, 0.85); overflow: hidden; transform-origin: left; }
+.is-in .bar i { animation: grow 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 1s backwards; }
+.bar i::after { content: ''; position: absolute; inset: 0; width: 45%; background: linear-gradient(90deg, transparent, rgba(124, 192, 255, 0.95), transparent); animation: shimmer var(--sd, 3s) linear infinite; }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes shimmer { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+.sep { height: 1px; border: 0; margin: 0; background: rgba(255, 255, 255, 0.25); }
+
+/* --- beaches: parasol, dots --- */
+.parasol { top: -40px; right: 10px; width: 64px; height: 56px; }
+.parasol svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 32px 56px; animation: sway 5s ease-in-out infinite; }
+.canopy { transform-box: view-box; transform-origin: 32px 28px; transform: scaleX(0.78); transition: transform 0.55s cubic-bezier(0.3, 1.5, 0.5, 1); }
+.card:hover .canopy { transform: scaleX(1); }
+@keyframes sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+.big { display: flex; align-items: flex-end; gap: 10px; padding-block: 12px; font: 700 52px/1 var(--display); }
+.big .dim { opacity: 0.2; }
+.beach-body { display: flex; flex-direction: column; gap: 16px; flex: 1; }
+.beach-body p { margin: 0; font-size: 14px; letter-spacing: -0.02em; }
+.beach-body .mute { opacity: 0.6; }
+.dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+.dots i { aspect-ratio: 1; border-radius: 50%; background: #fff; }
+.dots i.off { opacity: 0.2; }
+.is-in .dots i { animation: dotin 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) backwards; animation-delay: calc(1s + var(--n) * 28ms); }
+@keyframes dotin { from { transform: scale(0); opacity: 0; } }
+
+/* ---------- panel ---------- */
+.scrim { position: fixed; inset: 0; z-index: 30; background: rgba(5, 18, 32, 0.2); opacity: 0; pointer-events: none; transition: opacity 0.6s; }
+body.panel-open .scrim { opacity: 1; pointer-events: auto; }
+.panel {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; max-width: 1440px; margin-inline: auto; max-height: 92vh; overflow-y: auto; overscroll-behavior: contain;
+  padding: 32px clamp(16px, 2vw, 24px) 80px; border-radius: 24px 24px 0 0; background: rgba(8, 28, 48, 0.42); border: 1px solid rgba(255, 255, 255, 0.28); border-bottom: 0;
+  transform: translateY(105%); visibility: hidden; transition: transform 0.85s cubic-bezier(0.2, 0.85, 0.2, 1), visibility 0s 0.85s;
+}
+body.panel-open .panel { transform: none; visibility: visible; transition-delay: 0s; }
+.ph { display: flex; align-items: center; gap: 24px; margin-bottom: 76px; }
+.ph-pin { font-size: 32px; }
+.vr { align-self: stretch; width: 1px; background: rgba(255, 255, 255, 0.3); }
+.ph .names { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.ph h2 { margin: 0; font: 400 clamp(26px, 3vw, 32px)/1 var(--body); letter-spacing: -0.02em; }
+.ph p { margin: 0; font-size: 16px; letter-spacing: -0.02em; opacity: 0.6; }
+.close { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #6e6e98; background: transparent; display: grid; place-items: center; cursor: pointer; font-size: 18px; transition: background 0.25s, transform 0.4s; flex: none; }
+.close:hover { background: rgba(255, 255, 255, 0.12); transform: rotate(90deg); }
+.pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; align-items: stretch; }
+/* glass card, same recipe as the home cards */
+.pc {
+  position: relative; isolation: isolate; min-width: 0; display: flex; flex-direction: column; border-radius: 24px; color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: radial-gradient(120% 70% at 0% 0%, rgba(255, 255, 255, 0.22), transparent 62%), rgba(255, 255, 255, 0.07);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  box-shadow: inset -5px -5px 250px rgba(255, 255, 255, 0.02), 0 24px 60px -26px rgba(3, 20, 38, 0.6);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s, box-shadow 0.4s;
+}
+.pc:hover { transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.9); box-shadow: inset -5px -5px 250px rgba(255, 255, 255, 0.02), 0 34px 70px -26px rgba(3, 20, 38, 0.7); }
+.p-in .pc { animation: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(0.25s + var(--i) * 0.1s); }
+.inn { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; padding: 28px 32px; flex: 1; min-width: 0; }
+.pfx { position: absolute; inset: 0; z-index: 0; border-radius: 24px; overflow: hidden; container-type: size; pointer-events: none; }
+.pfx.fade { -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 72%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 72%, transparent 100%); }
+.pc .pt { display: flex; align-items: center; gap: 8px; padding-right: 52px; }
+.pic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.1); font-size: 18px; flex: none; }
+.pc h3 { margin: 0; font: 700 13px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; }
+.reading { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.stat { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding-inline: 12px; border-radius: 100px; background: rgba(255, 255, 255, 0.2); font: 500 12px/1 var(--body); letter-spacing: 0.06em; white-space: nowrap; }
+.stat i { width: 8px; height: 8px; border-radius: 50%; background: var(--dot, #9fd8ff); transition: background 0.4s; }
+.stat.soft { animation: softpulse 2.8s ease-in-out infinite; }
+@keyframes softpulse { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--dot, #8fe3b0) 55%, transparent); } 60% { box-shadow: 0 0 0 7px transparent; } }
+.quote { margin: 0; min-height: 48px; font: 500 18px/24px var(--body); }
+.scale { position: relative; height: 91px; margin-block: 4px; }
+.bands { position: absolute; top: 24px; left: 0; right: 0; height: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+.bands i { position: relative; border-radius: 4px; background: var(--c); transition: transform 0.25s; }
+.bands i:hover { transform: scaleY(1.8); }
+.bands i::after { content: attr(data-r); position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); white-space: nowrap; padding: 4px 8px; border-radius: 6px; background: var(--navy); color: #fff; font: 500 11px/1 var(--body); opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.bands i:hover::after { opacity: 1; transform: translateX(-50%) scaleY(0.555); }
+.ticks span, .bnames span { position: absolute; white-space: nowrap; font: 400 11px/1 var(--body); color: rgba(255, 255, 255, 0.7); }
+.ticks span { top: 43px; transform: translateX(-50%); }
+.ticks span:first-child { transform: none; }
+.ticks span:last-child { transform: translateX(-100%); }
+.bnames { position: absolute; top: 64px; left: 0; right: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+.bnames span { position: static; text-align: center; transition: color 0.3s; }
+.bnames span.on { font-weight: 700; color: #fff; text-decoration: underline; }
+.ptr { position: absolute; top: 12px; left: var(--pos, 40%); width: 13px; height: 30px; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
+.p-in .ptr { animation: slideptr 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s backwards; }
+@keyframes slideptr { from { left: 0; } }
+.note, .src2 { margin: 0; font: 400 14px/1.32 var(--body); letter-spacing: -0.01em; }
+.note { color: rgba(255, 255, 255, 0.62); }
+.src2 { color: rgba(255, 255, 255, 0.8); }
+.src2 a { text-decoration: underline; }
+.pc.cold .note { animation: warn 2.2s ease-in-out infinite; }
+@keyframes warn { 0%, 100% { color: rgba(255, 255, 255, 0.62); } 50% { color: #ffb48a; } }
+
+/* panel hanging elements: entrance */
+.p-in .pc .hang { animation: dropin 1s cubic-bezier(0.3, 1.5, 0.5, 1) backwards; }
+.p-in #pcWater .hang { animation-delay: 0.9s; }
+.p-in #pcWeek .hang { animation-delay: 1.1s; }
+.p-in #pcBeach .hang { animation-delay: 1.3s; }
+.p-in .ph-pin { animation: pindrop 0.9s cubic-bezier(0.3, 1.6, 0.5, 1) 0.35s backwards; }
+.pinbox { position: relative; display: grid; place-items: center; width: 32px; height: 32px; flex: none; }
+.pinbox::after { content: ''; position: absolute; left: 50%; bottom: -3px; width: 22px; height: 8px; margin-left: -11px; border: 1.5px solid rgba(255, 255, 255, 0.65); border-radius: 50%; opacity: 0; }
+.p-in .pinbox::after { animation: pinring 2.8s ease-out 1s infinite; }
+@keyframes pindrop { from { transform: translateY(-28px); opacity: 0; } }
+@keyframes pinring { 0% { transform: scale(0.3); opacity: 0.9; } 70%, 100% { transform: scale(2.4); opacity: 0; } }
+
+/* 1. thermometer */
+.thermo { top: -44px; right: 28px; width: 40px; height: 156px; transform-origin: 50% 92%; transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.5, 1); filter: drop-shadow(0 10px 14px rgba(4, 24, 46, 0.35)); }
+.thermo svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.pc:hover .thermo { transform: rotate(7deg); }
+.thermo stop { transition: stop-color 0.6s; }
+.mercwrap { transform-box: fill-box; transform-origin: 50% 100%; animation: pbreath 3.6s ease-in-out infinite; }
+.pc:hover .mercwrap { animation: pjig 1.1s ease-in-out infinite; }
+.pcol { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(var(--lv, 0.5)); transition: transform 0.9s cubic-bezier(0.3, 0.9, 0.3, 1); }
+.p-in .pcol { animation: fillup 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.9s backwards; }
+@keyframes pbreath { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.025); } }
+@keyframes pjig { 0%, 100% { transform: scaleY(0.96); } 50% { transform: scaleY(1.06); } }
+.pp { position: absolute; left: var(--x); width: var(--s); height: var(--s); border-radius: 50%; opacity: 0; animation-duration: var(--d); animation-delay: var(--dl); animation-iteration-count: infinite; animation-timing-function: linear; }
+[data-band="0"] .pp, [data-band="1"] .pp { top: -10px; background: var(--mcl); animation-name: psnow; }
+[data-band="2"] .pp { bottom: -10px; border: 1.5px solid var(--mcl); animation-name: prise; }
+[data-band="3"] .pp { bottom: -10px; background: var(--mcl); box-shadow: 0 0 8px var(--mc); animation-name: pember; }
+@keyframes psnow { 0% { transform: translate(0, 0); opacity: 0; } 12% { opacity: 0.75; } 50% { transform: translate(10px, 50cqh); } 100% { transform: translate(-6px, calc(100cqh + 10px)); opacity: 0; } }
+@keyframes prise { 0% { transform: translate(0, 0) scale(0.6); opacity: 0; } 15% { opacity: 0.85; } 100% { transform: translate(8px, calc(-100cqh - 20px)) scale(1.1); opacity: 0; } }
+@keyframes pember { 0% { transform: translate(0, 0) scale(0.4); opacity: 0; } 20% { opacity: 0.95; } 100% { transform: translate(-10px, calc(-100cqh - 20px)) scale(1); opacity: 0; } }
+
+/* 2. water waves */
+.surf { top: -26px; right: 22px; width: 150px; height: 44px; filter: drop-shadow(0 10px 12px rgba(4, 24, 46, 0.35)); }
+.pool { position: absolute; inset: 0; border-radius: 22px; overflow: hidden; transform-origin: 50% 100%; transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.5, 1); }
+.pc:hover .pool { transform: scaleY(1.3); }
+.psw { position: absolute; left: 0; bottom: 0; width: 200%; height: 36px; fill: url(#swF); animation: pwave 5s linear infinite; }
+.psw.b { height: 40px; fill: rgba(255, 255, 255, 0.6); animation-duration: 8s; animation-direction: reverse; }
+@keyframes pwave { to { transform: translateX(-50%); } }
+.sdrop { position: absolute; left: var(--x); top: 12px; width: 5px; height: 5px; border-radius: 50%; background: #d3ecff; opacity: 0; animation: pjump 2.6s ease-out var(--dl) infinite; }
+@keyframes pjump { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } 45% { transform: translate(4px, -17px); opacity: 1; } 80% { transform: translate(9px, 0); opacity: 1; } 100% { transform: translate(10px, 3px); opacity: 0; } }
+.pwv { position: absolute; left: 0; bottom: 0; width: 200%; height: 40px; fill: rgba(157, 198, 255, 0.22); animation: pwave 9s linear infinite; }
+.pwv.b { height: 52px; fill: rgba(157, 198, 255, 0.12); animation-duration: 14s; animation-direction: reverse; }
+
+/* 7 day chart */
+.c7 { position: relative; height: 167px; border-radius: 16px; background: rgba(0, 0, 0, 0.16); touch-action: pan-y; cursor: crosshair; }
+.c7 svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.c7 text { font: 400 10px var(--body); fill: rgba(255, 255, 255, 0.75); }
+.c7 .lastlab { fill: #fff; }
+.c7 .gl { stroke: rgba(255, 255, 255, 0.2); stroke-width: 1; }
+.c7 .l7 { fill: none; stroke: #9fd8ff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; }
+.c7 .a7 { fill: url(#fill7); }
+.p-in .l7 { animation: draw 1.4s 0.7s cubic-bezier(0.5, 0, 0.2, 1) backwards; }
+.p-in .a7 { animation: fadein 1s 1.5s backwards; }
+.p-in .d7 { animation: pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 1.9s backwards; }
+.d7 { fill: #fff; transform-box: fill-box; transform-origin: center; }
+.c7 .guide { stroke: #fff; stroke-opacity: 0.5; stroke-dasharray: 3 3; opacity: 0; transition: opacity 0.2s; }
+.c7 .gdot { fill: #0b2a43; stroke: #fff; stroke-width: 2; opacity: 0; transition: opacity 0.2s; }
+.c7.hov .guide, .c7.hov .gdot { opacity: 1; }
+.c7 .h7 { fill: rgba(255, 255, 255, 0.28); transform-box: fill-box; transform-origin: center; animation: pulse 2.6s ease-out 2.4s infinite; }
+.c7 .glint { animation: glint 5.5s ease-in-out 2.4s infinite; }
+@keyframes glint { 0% { transform: translateX(0); } 55%, 100% { transform: translateX(calc(var(--cw, 360px) + 80px)); } }
+.tip { position: absolute; z-index: 4; pointer-events: none; padding: 5px 9px; border-radius: 8px; background: var(--navy); color: #fff; font: 500 12px/1.2 var(--body); white-space: nowrap; opacity: 0; transform: translate(-50%, calc(-100% - 12px)); transition: opacity 0.2s, left 0.12s, top 0.12s; }
+.c7.hov .tip { opacity: 1; }
+.cap { margin: 8px 0 0; font: 700 13px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
+.mps { display: flex; flex-direction: column; padding-top: 6px; }
+.mp { display: grid; grid-template-columns: minmax(88px, 1fr) minmax(30px, 135px) auto; align-items: center; gap: 10px; min-height: 51px; padding-block: 4px; padding-inline: 10px; border-radius: 13px; border: 1px solid transparent; transition: transform 0.25s, background 0.25s; }
+.mp.sel { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.6); }
+.mp:hover:not(.sel) { background: rgba(255, 255, 255, 0.08); transform: translateX(3px); }
+.mp .where { min-width: 0; display: flex; flex-direction: column; }
+.mp .where b { font: 500 13px/17px var(--body); }
+.mp .where span { font: 400 12px/15px var(--body); color: rgba(255, 255, 255, 0.65); }
+.mp .trk { height: 6px; border-radius: 100px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
+.mp .trk i { position: relative; overflow: hidden; display: block; height: 100%; width: var(--p); border-radius: 100px; background: #9fd8ff; transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.p-in .mp .trk i { animation: gw 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(0.9s + var(--i) * 0.12s); }
+@keyframes gw { from { width: 0; } }
+.mp.sel .trk i::after { content: ''; position: absolute; inset: 0; width: 45%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), transparent); animation: shimmer 3s linear 2.2s infinite; }
+.mp .val { font: 700 15px/1 var(--body); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 58px; }
+.mp .where span { white-space: nowrap; }
+
+/* 3. parasol and beach ball: open or furled */
+.bhead { display: flex; align-items: center; gap: 10px; }
+.bhead strong { flex: 1; font: 700 20px/24px var(--body); }
+.rows { display: flex; flex-direction: column; margin-top: 4px; }
+.rowd { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); font: 400 14px/18px var(--body); }
+.rowd.last { border-bottom: 0; min-height: 44px; }
+.rowd b { font-weight: 500; text-align: right; }
+.svc { margin: 4px 0 0; font: 700 13px/18px var(--body); }
+.chips { display: flex; flex-wrap: wrap; gap: 9px; align-content: flex-start; }
+.chip { height: 32px; padding-inline: 14px; border-radius: 8px; background: rgba(255, 255, 255, 0.14); display: inline-flex; align-items: center; font: 500 14px/16px var(--body); transition: transform 0.25s, background 0.25s; }
+.chip:hover { transform: translateY(-3px); background: rgba(255, 255, 255, 0.24); }
+.p-in .chip { animation: pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) backwards; animation-delay: calc(1.1s + var(--i) * 70ms); }
+.dir { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin-top: auto; padding: 12px 32px; border-radius: 12px; background: #fff; color: #08283a; text-decoration: none; font: 500 15px/1.2 var(--body); transition: background 0.25s, transform 0.25s; }
+.dir:hover { background: #e6f1fb; transform: translateY(-2px); }
+.dir .ic { transition: transform 0.3s; }
+.dir:hover .ic { transform: translateX(4px); }
+.scene { top: -62px; right: 22px; width: 132px; height: 76px; filter: drop-shadow(0 8px 10px rgba(4, 24, 46, 0.3)); }
+.scene > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
+.sway2 { transform-box: view-box; transform-origin: 52px 62px; animation: psway 5s ease-in-out infinite; }
+@keyframes psway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+.pcanopy { transform-box: view-box; transform-origin: 52px 20px; transition: transform 0.8s cubic-bezier(0.3, 1.5, 0.5, 1); }
+#pcBeach[data-beach="open"] .pcanopy { transition-delay: 0s; }
+#pcBeach[data-beach="closed"] .pcanopy { transform: scaleX(0.2); transition-delay: 0.7s; }
+#pcBeach[data-beach="open"]:hover .pcanopy { transform: scaleX(1.06); }
+.strap { opacity: 0; transition: opacity 0.3s; }
+#pcBeach[data-beach="closed"] .strap { opacity: 1; transition-delay: 1.2s; }
+.cast { transform-box: fill-box; transform-origin: center; transition: transform 0.8s cubic-bezier(0.3, 1.5, 0.5, 1), opacity 0.5s; }
+#pcBeach[data-beach="closed"] .cast { transform: scaleX(0.15); opacity: 0.35; transition-delay: 0.7s; }
+.ballw { position: absolute; left: 60px; bottom: 14px; width: 22px; height: 22px; transform: translateX(88px); opacity: 0; filter: drop-shadow(0 3px 3px rgba(98, 64, 20, 0.25)); transition: transform 1.2s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 0.3s 0.9s; }
+#pcBeach[data-beach="open"] .ballw { transform: none; opacity: 1; transition: transform 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s, opacity 0.2s 0.55s; }
+.ballh { width: 100%; height: 100%; position: relative; transform-origin: 50% 100%; }
+#pcBeach[data-beach="open"] .ballh { animation: phop 3.2s ease-in-out 2.3s infinite; }
+#pcBeach[data-beach="open"]:hover .ballh { animation: phop-hi 1.2s ease-in-out infinite; }
+.ballr { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#ff8a45 0 60deg, #ffffff 60deg 120deg, #3b8fd6 120deg 180deg, #ffffff 180deg 240deg, #ffd24d 240deg 300deg, #ffffff 300deg 360deg); transform: rotate(418deg); transition: transform 1.2s cubic-bezier(0.5, 0, 0.8, 0.4); }
+#pcBeach[data-beach="open"] .ballr { transform: rotate(0); transition: transform 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s; }
+.gloss { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 38%), radial-gradient(circle at 70% 78%, rgba(11, 42, 67, 0.28), rgba(11, 42, 67, 0) 55%); }
+.bshadow { position: absolute; left: 58px; bottom: 11px; width: 26px; height: 6px; border-radius: 50%; background: rgba(98, 64, 20, 0.38); opacity: 0; transform: translateX(88px); transition: transform 1.2s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 0.3s 0.9s; }
+#pcBeach[data-beach="open"] .bshadow { opacity: 1; transform: none; transition: transform 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.55s, opacity 0.2s 0.55s; animation: phops 3.2s ease-in-out 2.3s infinite; }
+#pcBeach[data-beach="open"]:hover .bshadow { animation: phops-hi 1.2s ease-in-out infinite; }
+@keyframes phop { 0% { transform: translateY(0) scale(1, 1); } 8% { transform: translateY(0) scale(1.1, 0.88); } 30% { transform: translateY(-9px) scale(0.98, 1.03); } 48% { transform: translateY(0) scale(1.1, 0.88); } 56%, 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes phop-hi { 0% { transform: translateY(0) scale(1, 1); } 12% { transform: translateY(0) scale(1.12, 0.84); } 45% { transform: translateY(-22px) scale(0.97, 1.04); } 75% { transform: translateY(0) scale(1.12, 0.84); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes phops { 0%, 56%, 100% { transform: scale(1); } 30% { transform: scale(0.65); } }
+@keyframes phops-hi { 0%, 100% { transform: scale(1); } 45% { transform: scale(0.5); } }
+
+/* ---------- spot picker (header "My spot") ---------- */
+.head { position: relative; z-index: 25; }
+.sp-wrap { position: relative; }
+.sp-chev { transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1); }
+#spPill[aria-expanded="true"] .sp-chev { transform: rotate(180deg); }
+#spName { max-width: 22ch; overflow: hidden; text-overflow: ellipsis; }
+.sp-scrim { display: none; }
+.sp-panel {
+  position: absolute; z-index: 30; top: calc(100% + 12px); right: 0; width: min(420px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 140px)); display: flex; flex-direction: column;
+  padding: 24px 24px 12px; border-radius: 20px; background: #fff; color: var(--navy); box-shadow: 0 30px 80px -20px rgba(3, 20, 38, 0.65);
+  transform-origin: 90% 0; transform: translateY(-10px) scale(0.96); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.25s, visibility 0s 0.4s;
+}
+.sp-panel.open { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+.sp-top { flex: none; display: flex; flex-direction: column; gap: 10px; }
+.sp-top h2 { margin: 0; font: 700 15px/19px var(--body); }
+.sp-field { display: flex; align-items: center; gap: 11px; height: 47px; padding: 0 12px 0 15px; border-radius: 12px; border: 1.3px solid #91a2af; background: #f9f9f9; font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+.sp-field:focus-within { border-color: var(--blue); background: #fff; box-shadow: 0 0 0 3px rgba(33, 107, 166, 0.18); }
+.sp-field .ic { font-size: 18px; color: #3e627f; }
+.sp-field input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; color: var(--navy); font: 400 14px/20px var(--body); }
+.sp-field input::placeholder { color: #4c6780; }
+.sp-clear { display: none; width: 28px; height: 28px; border: 0; border-radius: 50%; background: transparent; color: #3e627f; cursor: pointer; place-items: center; font-size: 16px; }
+.sp-clear:hover { background: #e6f4ff; }
+.sp-field.has .sp-clear { display: grid; }
+.sp-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin-inline: -8px; padding-inline: 8px; scrollbar-width: thin; }
+.sp-grp { padding-top: 14px; }
+.sp-grp h3 { margin: 0 0 8px; padding-left: 4px; display: flex; align-items: baseline; gap: 8px; font: 700 13px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; color: #5c90bb; }
+.sp-grp h3 small { font: 500 12px/1 var(--body); letter-spacing: 0; opacity: 0.8; }
+.sp-opt { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 10px; border-radius: 11px; cursor: pointer; transition: background 0.18s, transform 0.25s; }
+.sp-opt:hover, .sp-opt.act { background: #f1f7fc; transform: translateX(3px); }
+.sp-opt.act { box-shadow: inset 0 0 0 1.5px rgba(33, 107, 166, 0.5); }
+.sp-opt.sel { background: #e6f4ff; }
+.sp-det { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.sp-opt b { font: 700 14px/18px var(--body); overflow-wrap: anywhere; }
+.sp-sub { font: 400 12px/17px var(--body); color: #3e627f; }
+.sp-opt mark { background: #ffe9a8; color: inherit; border-radius: 3px; padding: 0 1px; }
+.sp-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.sp-meta .t { font: 700 14px/1 var(--body); font-variant-numeric: tabular-nums; }
+.sp-meta .st { display: inline-flex; align-items: center; gap: 5px; font: 500 11px/1 var(--body); color: #3e627f; }
+.sp-meta .st i { width: 7px; height: 7px; border-radius: 50%; background: #21a671; }
+.sp-meta .st.closed i { background: #d64545; }
+.sp-tick { width: 18px; flex: none; color: var(--navy); opacity: 0; transform: scale(0.4); transition: opacity 0.25s, transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1); }
+.sp-opt.sel .sp-tick { opacity: 1; transform: none; }
+.sp-panel.open .sp-opt { animation: sp-opt-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(0.12s + var(--i) * 28ms); }
+@keyframes sp-opt-in { from { opacity: 0; transform: translateY(8px); } }
+.sp-empty { padding: 28px 8px 20px; text-align: center; color: #3e627f; font-size: 14px; }
+.sp-empty b { display: block; margin-bottom: 4px; color: var(--navy); font-size: 15px; }
+.sp-foot { flex: none; margin: 4px 0 0; padding: 10px 4px 2px; border-top: 1px solid #e3ebf1; font: 400 12px/1.35 var(--body); color: #3e627f; }
+.spot-swap #heroTitle, .spot-swap .hero .src, .spot-swap .place { animation: spotin 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+@keyframes spotin { from { opacity: 0; transform: translateY(10px); } }
+@media (max-width: 900px) { .sp-panel { right: auto; left: 0; } }
+@media (max-width: 640px) {
+  .sp-wrap { position: static; }
+  .sp-panel { position: fixed; left: 8px; right: 8px; top: auto; bottom: 8px; width: auto; max-height: 82vh; transform-origin: 50% 100%; transform: translateY(40px); }
+  .sp-panel.open { transform: none; }
+  .sp-scrim { position: fixed; inset: 0; z-index: 20; display: block; background: rgba(5, 18, 32, 0.45); opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+  .sp-wrap.open .sp-scrim { opacity: 1; pointer-events: auto; }
+  body.sp-open .dock { opacity: 0; pointer-events: none; }
+}
+
+/* ---------- mobile tab bar: one card at a time, floating icon menu ---------- */
+.tabs { display: none; }
+@media (max-width: 640px) {
+  .tabs {
+    display: flex; position: fixed; z-index: 20; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); gap: 4px; padding: 6px; border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.5); background: rgba(14, 40, 66, 0.55); -webkit-backdrop-filter: blur(18px) saturate(1.3); backdrop-filter: blur(18px) saturate(1.3);
+    box-shadow: 0 18px 40px -12px rgba(3, 20, 38, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    animation: tb-in 0.8s cubic-bezier(0.3, 1.4, 0.5, 1) 1.2s backwards; transition: opacity 0.3s, transform 0.4s;
+  }
+  body.panel-open .tabs, body.sp-open .tabs { opacity: 0; pointer-events: none; transform: translate(-50%, 30px); }
+  .tb-slider { position: absolute; z-index: 0; top: 6px; left: 6px; width: 56px; height: 56px; border-radius: 50%; background: #fff; box-shadow: 0 6px 16px -4px rgba(3, 20, 38, 0.55); transform: translateX(calc(var(--ti, 0) * 60px)); transition: transform 0.5s cubic-bezier(0.3, 1.35, 0.5, 1); }
+  .tb { position: relative; z-index: 1; width: 56px; height: 56px; border: 0; border-radius: 50%; background: transparent; color: rgba(255, 255, 255, 0.85); cursor: pointer; display: grid; place-items: center; font-size: 26px; transition: color 0.3s, transform 0.3s; -webkit-tap-highlight-color: transparent; }
+  .tb:active { transform: scale(0.9); }
+  .tb[aria-selected="true"] { color: var(--navy); }
+  .tb .ic { stroke-width: 1.8; overflow: visible; }
+  .tb[aria-selected="true"] .g-therm .tfill { animation: tb-fill 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; transform-box: fill-box; transform-origin: 50% 100%; }
+  .tb[aria-selected="true"] .g-sun { animation: tb-spin 1.1s cubic-bezier(0.3, 1.3, 0.5, 1); transform-box: fill-box; transform-origin: center; }
+  .tb[aria-selected="true"] .g-wave { animation: tb-slide 0.8s cubic-bezier(0.3, 1.3, 0.5, 1); }
+  .tb[aria-selected="true"] .g-umb { animation: tb-tilt 0.9s cubic-bezier(0.3, 1.6, 0.5, 1); transform-box: fill-box; transform-origin: 50% 100%; }
+  .tabs-on .cell:not(.tab-on) { display: none; }
+  .tabs-on .cell.tab-on { animation: tb-card 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: 0s; }
+  .tabs-on .grid { overflow-x: clip; margin-inline: -16px; padding-inline: 16px; }
+  .tabs-on .app { padding-bottom: calc(128px + env(safe-area-inset-bottom)); }
+  .tabs-on .dock { bottom: calc(92px + env(safe-area-inset-bottom)); }
+}
+@keyframes tb-in { from { opacity: 0; transform: translate(-50%, 40px) scale(0.9); } }
+@keyframes tb-card { from { opacity: 0; transform: translateX(calc(var(--tdir, 1) * 36px)) scale(0.97); } }
+@keyframes tb-fill { from { transform: scaleY(0.1); } }
+@keyframes tb-spin { from { transform: rotate(-120deg) scale(0.7); } }
+@keyframes tb-slide { from { transform: translateX(-8px); opacity: 0.2; } }
+@keyframes tb-tilt { 0% { transform: rotate(-25deg); } 60% { transform: rotate(8deg); } 100% { transform: none; } }
+
+/* ---------- demo dock + toast ---------- */
+.dock { position: fixed; right: 16px; bottom: 16px; z-index: 60; }
+.dock-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.5); background: rgba(8, 24, 40, 0.7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); display: grid; place-items: center; cursor: pointer; font-size: 18px; }
+.dock-body { position: absolute; right: 0; bottom: 56px; width: min(280px, calc(100vw - 32px)); padding: 16px; border-radius: 16px; background: rgba(8, 24, 40, 0.88); border: 1px solid rgba(255, 255, 255, 0.2); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); display: flex; flex-direction: column; gap: 14px; }
+.dock-body[hidden] { display: none; }
+.dock-h { margin: 0; font: 700 12px/1 var(--body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--sky); }
+.dock-body fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.dock-body legend, .dock-body label { padding: 0; font: 500 13px/1 var(--body); display: flex; justify-content: space-between; gap: 8px; }
+.seg { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(255, 255, 255, 0.12); }
+.seg button { flex: 1; padding: 9px 6px; border: 0; border-radius: 9px; background: transparent; cursor: pointer; font: 500 13px/1 var(--body); }
+.seg button[aria-pressed="true"] { background: #fff; color: #08283a; }
+.dock-body input[type="range"] { width: 100%; accent-color: #7cc0ff; }
+.dock-body .rp { padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.35); background: transparent; cursor: pointer; font: 500 13px/1 var(--body); }
+.dock-body .rp:hover, .seg button:hover { background: rgba(255, 255, 255, 0.14); }
+.seg button[aria-pressed="true"]:hover { background: #fff; }
+.toast { position: fixed; left: 50%; bottom: 24px; z-index: 70; transform: translate(-50%, 20px); padding: 12px 18px; border-radius: 12px; background: rgba(8, 24, 40, 0.92); border: 1px solid rgba(255, 255, 255, 0.25); font: 500 14px/1.3 var(--body); opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; max-width: calc(100vw - 32px); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1180px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 64px; }
+  .pgrid { gap: 20px; }
+  .inn { padding: 24px; }
+}
+@media (max-width: 900px) {
+  .head { grid-template-columns: 1fr; justify-items: start; min-height: 0; }
+  .alert { justify-self: start; }
+  .head-r { justify-self: start; justify-content: flex-start; }
+  .pgrid { grid-template-columns: minmax(0, 1fr); row-gap: 80px; }
+  .cover { width: 100%; background: linear-gradient(180deg, rgba(7, 34, 66, 0.9) 0%, rgba(10, 48, 88, 0.72) 55%, rgba(14, 62, 108, 0.2) 100%); -webkit-mask-image: none; mask-image: none; }
+}
+@media (max-width: 640px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .alert { flex-wrap: wrap; }
+}
+
+/* language switch */
+.lang { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; align-items: stretch; padding: 3px; border-radius: 12px; background: var(--chip); border: 1px solid var(--chip); min-height: 42px; }
+.lang button { position: relative; z-index: 1; border: 0; background: none; color: #fff; font: 600 13px/1 var(--body); letter-spacing: 0.06em; padding: 0 13px; min-width: 42px; cursor: pointer; border-radius: 9px; transition: color 0.25s; }
+.lang button[aria-pressed="true"] { color: var(--navy); }
+.lang button:not([aria-pressed="true"]):hover { color: rgba(255, 255, 255, 0.8); }
+.lang button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.lang-th { position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 2); border-radius: 9px; background: #fff; transform: translateX(calc(var(--li, 0) * 100%)); transition: transform 0.4s cubic-bezier(0.3, 1.25, 0.5, 1); }
+@media (min-width: 1101px) { .head { grid-template-columns: auto 1fr auto; } .alert { justify-self: center; } .head-r { flex-wrap: nowrap; gap: 12px; } }
+@media (max-width: 1100px) {
+  .head { grid-template-columns: 1fr; justify-items: start; min-height: 0; }
+  .alert { justify-self: start; }
+  .head-r { justify-self: start; justify-content: flex-start; }
+}
+@media (max-width: 640px) {
+  .head-r { gap: 8px; }
+  .lang button { min-width: 36px; padding: 0 10px; }
+  .head { grid-template-columns: 1fr auto; align-items: start; }
+  .head > .lang { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; margin-top: 2px; }
+  .head > .alert, .head > .head-r { grid-column: 1 / -1; }
+}
+
+/* =====================================================================
+   FLAT THEME — solid colour fields, no photo, glass, blur or shadows.
+   The page colour follows the weather (rain / cloudy / clear).
+   ===================================================================== */
+:root {
+  --display: 'Unbounded', 'Arial Black', Impact, sans-serif;
+  --body: 'Figtree', 'Helvetica Neue', Arial, sans-serif;
+  --sun: #e3be4b; --cloud: #ebe4e5; --terra: #c9745a; --water: #5c9cc0; --orange: #e8742a;
+  --bg: #3d5c99; --ink: #f6f5f2; --ink2: rgba(246, 245, 242, 0.7); --acc: #c9745a;
+  --card: color-mix(in srgb, var(--bg), #000 17%);
+  --well: color-mix(in srgb, var(--card), #000 16%);
+  --soft: color-mix(in srgb, var(--ink), transparent 88%);
+  color-scheme: dark;
+}
+body[data-theme="cloudy"] {
+  --bg: #9cb1a5; --ink: #14181a; --ink2: rgba(20, 24, 26, 0.68); --acc: #7a8f85;
+  --card: color-mix(in srgb, var(--bg), #fff 30%);
+  --well: color-mix(in srgb, var(--card), #000 8%);
+  color-scheme: light;
+}
+body[data-theme="clear"] {
+  --bg: #67a5c6; --ink: #101417; --ink2: rgba(16, 20, 23, 0.68); --acc: #d9a92c;
+  --card: color-mix(in srgb, var(--bg), #fff 30%);
+  --well: color-mix(in srgb, var(--card), #000 8%);
+  color-scheme: light;
+}
+body { background: #0b3a5c; color: var(--ink); transition: color 0.8s ease; }
+:focus-visible { outline-color: var(--ink); }
+.glass, .fx, .pfx, .rv-spark, .sdrop, .shine, .well-wave, .bub, .pp, .halo, .c7 .h7, .c7 .glint, .pinbox::after { display: none !important; }
+
+/* photo background (flat: no blur, no zoom) with a plain gradient veil on the left */
+.bg { display: block !important; }
+.bg-img { animation: none !important; }
+.bg-water { display: none; }
+body.panel-open .bg-stack { filter: none; transform: none; }
+body.panel-open .cover { opacity: 1; }
+.cover { display: block !important; width: 62%; -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none;
+  background: linear-gradient(90deg, rgba(7, 34, 66, 0.92) 0%, rgba(10, 48, 88, 0.78) 45%, rgba(14, 62, 108, 0) 100%); }
+/* header + hero sit on the photo: always white */
+.head, .hero { color: #ffffff; --ink: #ffffff; --ink2: rgba(255, 255, 255, 0.8); --bg: #123a66; }
+
+/* header */
+.logo { font: 800 20px/1.02 var(--display); letter-spacing: -0.01em; color: var(--ink); }
+.alert { background: var(--orange); border: 0; border-radius: 18px; -webkit-backdrop-filter: none; backdrop-filter: none; color: #fff; }
+.alert-ic { background: #fff; color: var(--orange); border-radius: 12px; }
+.alert-ic::after { display: none; }
+.alert b { font-weight: 800; }
+.pill { border-radius: 14px; font-weight: 600; }
+.pill:hover { transform: none; }
+.pill-glass { background: transparent; border: 2px solid var(--ink); color: var(--ink); }
+.pill-glass:hover { background: var(--ink); color: var(--bg); }
+.pill-white { background: var(--ink); border: 2px solid var(--ink); color: var(--bg); }
+.lang { background: transparent; border: 2px solid var(--ink); border-radius: 14px; }
+.lang button { color: var(--ink); font-weight: 700; }
+.lang button[aria-pressed="true"] { color: var(--bg); }
+.lang button:not([aria-pressed="true"]):hover { color: var(--ink); opacity: 0.65; }
+.lang-th { background: var(--ink); border-radius: 10px; top: 2px; bottom: 2px; left: 2px; width: calc((100% - 4px) / 2); }
+
+/* hero */
+.eyebrow { color: var(--ink); opacity: 0.75; font-weight: 800; letter-spacing: 0.12em; }
+.hero { max-width: 820px; }
+.hero h2 { font-size: clamp(34px, 5.2vw, 68px) !important; font-weight: 800 !important; letter-spacing: -0.035em !important; line-height: 1.08 !important; }
+.hero .lead { font-weight: 500; letter-spacing: -0.01em; }
+.hero .src { color: var(--ink2); }
+.is-in .reveal { animation-duration: 0.7s; }
+
+/* cards */
+.card { background: var(--card); border-radius: 28px; padding: 26px; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.8s ease; }
+.card:hover { transform: translateY(-4px); }
+.card .title { padding-right: 88px; }
+.ibox, .pic { background: var(--ink); color: var(--card); border-radius: 50%; transition: background-color 0.8s, color 0.8s; }
+.label, .pc h3 { font: 800 12px/1.25 var(--body); letter-spacing: 0.1em; }
+.info { flex-direction: column; align-items: flex-start; gap: 0; }
+.rule { display: none; }
+.temp { padding-block: 6px 2px; align-items: baseline; }
+.temp { gap: 8px; }
+.temp .n { font: 800 42px/1 var(--display); letter-spacing: -0.04em; min-width: 0; }
+.flow .info .temp .n { --w: 0; }
+.temp .u { font: 500 16px/1 var(--display); }
+.place { gap: 3px; }
+.place strong { font: 700 17px/1.2 var(--body); }
+.place span { opacity: 1; color: var(--ink2); font-size: 14px; }
+.trend, .badge { background: var(--ink); color: var(--card); border-radius: 999px; font-weight: 700; transition: background-color 0.8s, color 0.8s, opacity 0.25s; }
+.badge { letter-spacing: 0.06em; }
+.well { background: var(--well); border-radius: 18px; transition: background-color 0.8s; }
+.axis { opacity: 1; color: var(--ink2); }
+.more button { font-weight: 700; }
+.card:hover .more .ic { transform: none; }
+
+/* charts */
+.line { stroke: var(--ink); stroke-width: 3; }
+.area { fill: var(--ink) !important; fill-opacity: 0.1; }
+.pt { fill: var(--ink); }
+.pt.last { fill: var(--acc); stroke: var(--ink); stroke-width: 2; }
+
+/* river + beaches */
+.river { gap: 22px; }
+.flow .info .temp { width: auto; }
+.flow .nm { font: 700 17px/1.2 var(--body); }
+.flow .meta { opacity: 1; color: var(--ink2); }
+.bar { height: 8px; border-radius: 8px; background: var(--soft); }
+.bar i { background: var(--ink); border-radius: 8px; }
+.bar i::after { display: none; }
+.sep { height: 1.5px; background: var(--ink); opacity: 0.45; }
+.big { font: 800 42px/1 var(--display); letter-spacing: -0.04em; }
+.big .dim { opacity: 0.25; }
+.beach-body .mute, .beach-body p { color: var(--ink2); }
+.beach-body > div > p { color: var(--ink); font-weight: 600; font-size: 15px; }
+.dots i { background: var(--ink); }
+.dots i.off { opacity: 0.22; }
+
+/* ---- big icons: flat, still ---- */
+.hang { filter: none !important; }
+.hang, .hang * { animation: none !important; transition: none !important; }
+.ph-pin { animation: none !important; }
+.orb { border: 0; background: #ece6e7; box-shadow: none; }
+.card:hover .orb { transform: none; }
+.cloud { width: 128px; top: -46px; filter: none; }
+.cloud g { fill: var(--cloud); }
+.sun { top: -50px; width: 112px; }
+.sun .core { fill: var(--sun); }
+.sun .rays { stroke: var(--sun); }
+.cloud, .sun { transform: none !important; transition: opacity 0.4s; }
+.card[data-weather="clear"] .cloud { opacity: 0; }
+.card[data-weather="rain"] .sun, .card[data-weather="cloudy"] .sun { opacity: 0; }
+.card[data-weather="clear"] .sun { opacity: 1; }
+.fl-drops { position: absolute; right: 8px; top: 22px; width: 100px; opacity: 0; transition: opacity 0.4s; }
+.fl-drops svg { display: block; width: 100%; height: auto; }
+.fl-drops line { stroke: var(--terra); stroke-width: 5; stroke-linecap: round; }
+.card[data-weather="rain"] .fl-drops { opacity: 1; }
+.rv-mount { filter: none; }
+.rv-peaks path[fill="url(#mtA)"] { fill: #8cafd0; }
+.rv-peaks path[fill="url(#mtB)"] { fill: #b9d0e4; }
+.rv-pool { background: var(--water); box-shadow: none; transform: none !important; }
+.rv-pw { transition: none; }
+.rv-pw.rv-l { --c: rgba(30, 86, 140, 0.4); }
+.parasol svg, .canopy { transform: none !important; }
+.parasol svg { transform-origin: center; }
+
+
+/* ---- new big icons (flat, static) ---- */
+.orb, .rv-mount, .parasol { display: none !important; }
+.fl-ic { top: -40px; right: 22px; }
+.fl-ic svg { display: block; width: 100%; height: auto; overflow: visible; }
+.fl-wave { width: 100px; top: -34px; }
+.fl-river { width: 112px; top: -42px; right: 18px; }
+.fl-ball { width: 76px; top: -40px; right: 24px; }
+
+/* ---- panel ---- */
+.scrim { background: rgba(10, 14, 20, 0.45); }
+.panel { background: #ffffff; border: 0; border-radius: 28px 28px 0 0; transition: transform 0.7s cubic-bezier(0.2, 0.85, 0.2, 1), visibility 0s 0.7s, background-color 0.8s; }
+body.panel-open .panel { transition-delay: 0s; }
+body.panel-open .app { filter: none; opacity: 0.25; transform: none; }
+.ph { --ink: #14181a; --ink2: rgba(20, 24, 26, 0.65); color: #14181a; }
+.pc { --ink: #14181a; --ink2: rgba(20, 24, 26, 0.68); --card: color-mix(in srgb, var(--bg), #fff 80%); --well: color-mix(in srgb, var(--card), #000 7%); --soft: color-mix(in srgb, #14181a, transparent 90%); }
+.ph h2 { font: 800 clamp(22px, 2.6vw, 30px)/1.1 var(--display); letter-spacing: -0.02em; }
+.ph p { opacity: 1; color: var(--ink2); }
+.vr { background: var(--ink); opacity: 0.4; }
+.close { border: 2px solid var(--ink); }
+.close:hover { background: var(--ink); color: var(--bg); transform: none; }
+.pc { background: var(--card); border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; border-radius: 28px; color: var(--ink); transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.8s; }
+.pc:hover { transform: translateY(-4px); border: 0; box-shadow: none; }
+.stat { background: var(--ink); color: var(--card); font-weight: 700; transition: background-color 0.8s, color 0.8s; }
+.stat.soft { animation: none; }
+.quote { font-weight: 600; }
+.bands i { border-radius: 6px; }
+.bands i:hover { transform: none; }
+.ticks span, .bnames span { color: var(--ink2); }
+.bnames span.on { color: var(--ink); }
+.ptr path, .ptr rect { fill: var(--ink); }
+.note { color: var(--ink2); }
+.src2 { color: var(--ink); }
+.pc.cold .note { animation: none; color: var(--ink); font-weight: 700; }
+.c7 { background: var(--well); border-radius: 18px; }
+.c7 text { fill: var(--ink2); }
+.c7 .lastlab { fill: var(--ink); font-weight: 800; }
+.c7 .gl { stroke: var(--ink); stroke-opacity: 0.14; }
+.c7 .l7 { stroke: var(--ink); stroke-width: 3; }
+.c7 .a7 { fill: var(--ink); fill-opacity: 0.1; }
+.d7 { fill: var(--acc); stroke: var(--ink); stroke-width: 2; }
+.c7 .guide { stroke: var(--ink); }
+.c7 .gdot { fill: var(--card); stroke: var(--ink); }
+.tip { background: var(--ink); color: var(--card); }
+.cap { color: var(--ink); opacity: 0.75; }
+.mp { border-radius: 14px; border-width: 2px; }
+.mp.sel { background: var(--soft); border-color: var(--ink); }
+.mp:hover:not(.sel) { background: var(--soft); transform: none; }
+.mp .where span { color: var(--ink2); }
+.mp .trk { background: var(--soft); }
+.mp .trk i { background: var(--ink); }
+.mp.sel .trk i::after { display: none; }
+.rowd { border-bottom-color: color-mix(in srgb, var(--ink), transparent 72%); }
+.chip { background: var(--soft); border-radius: 10px; font-weight: 600; }
+.chip:hover { transform: none; background: var(--soft); }
+.dir { background: var(--ink); color: var(--card); border-radius: 14px; font-weight: 700; }
+.dir:hover { background: var(--ink); opacity: 0.85; transform: none; }
+.thermo { transition: none; }
+.pc:hover .thermo { transform: none; }
+.thermo [fill="url(#tTube)"], .thermo [fill="url(#tBulb)"] { fill: #ece6e7; }
+.thermo [fill="url(#tMerc)"], .thermo [fill="url(#tMercB)"] { fill: var(--mc, #2b84bf); }
+.thermo rect[x="12"], .thermo ellipse { display: none; }
+.thermo g[stroke] { stroke: var(--ink); stroke-opacity: 0.7; }
+.pool { background: #9ccbe3; transition: none; }
+.pc:hover .pool { transform: none; }
+.psw { fill: var(--water); }
+.psw.b { fill: rgba(255, 255, 255, 0.45); }
+.scene [fill="url(#sSand)"] { fill: #ebcf8a; }
+.scene [fill="url(#sPole)"] { fill: #ece6e7; }
+.scene [fill="url(#sFin)"] { fill: var(--sun); }
+.scene [fill="url(#sOr)"] { fill: var(--orange); }
+.scene [fill="url(#sWh)"] { fill: #f7f3ea; }
+.scene [fill="url(#sShade)"] { display: none; }
+.scene path[stroke-opacity] { display: none; }
+.gloss { display: none; }
+#pcBeach[data-beach="open"]:hover .pcanopy { transform: none; }
+
+/* spot picker popover */
+.sp-panel { box-shadow: none; border: 2px solid #14181a; border-radius: 22px; }
+
+/* demo dock + toast */
+.dock-btn { background: var(--ink); color: var(--bg); border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.dock-body { background: var(--ink); color: var(--bg); border: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.dock-h { color: var(--bg); opacity: 0.65; }
+.seg { background: color-mix(in srgb, var(--bg), transparent 85%); }
+.seg button[aria-pressed="true"], .seg button[aria-pressed="true"]:hover { background: var(--bg); color: var(--ink); }
+.dock-body .rp { border-color: var(--bg); }
+.dock-body .rp:hover, .seg button:hover { background: color-mix(in srgb, var(--bg), transparent 85%); }
+.dock-body input[type="range"] { accent-color: var(--bg); }
+.toast { background: var(--ink); color: var(--bg); border: 0; }
+
+/* mobile */
+@media (max-width: 900px) { .hero { max-width: none; } .cover { width: 100%; background: linear-gradient(180deg, rgba(7, 34, 66, 0.9) 0%, rgba(10, 48, 88, 0.72) 55%, rgba(14, 62, 108, 0.2) 100%); } }
+@media (max-width: 640px) {
+  .hero h2 { font-size: clamp(30px, 9vw, 46px) !important; }
+  .tabs { background: var(--ink); border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .tb { color: var(--bg); }
+  .tb[aria-selected="true"] { color: var(--ink); }
+  .tb-slider { background: var(--bg); box-shadow: none; }
+  .tabs-on .cell.tab-on { animation-duration: 0.35s; }
+}
+
+/* panel: nothing moves */
+.pcol, .pcanopy, .ballw, .bshadow, .ballr, .cast, .strap, .ptr, .mp .trk i, .bands i { transition: none !important; }
+.p-in .ptr, .p-in .mp .trk i, .p-in .pcol { animation: none !important; }
+
+/* panel wave icon (middle card) */
+.pc .fl-wave { width: 84px; top: -32px; right: 24px; }
+.surf { display: none !important; }
+
+/* ---- line icons inside the cards, bleeding into the top-right corner ---- */
+.hang { display: none !important; }
+.card, .pc { overflow: hidden; }
+.fl-line { position: absolute; z-index: -1; top: -14px; right: -14px; width: 100px; height: 100px; color: var(--ink); pointer-events: none; }
+.fl-line svg { display: block; width: 100%; height: 100%; }
+.pc .fl-line { width: 84px; height: 84px; top: -8px; right: -8px; }
+.pc .pt { padding-right: 84px; }
+.card .title { padding-right: 96px; }
+.ln-sun, .ln-cloud, .ln-rain { display: none; }
+.card[data-weather="clear"] .ln-sun, .card[data-weather="cloudy"] .ln-cloud, .card[data-weather="rain"] .ln-rain { display: inline; }
+
+/* ---- typography: Inter everywhere ---- */
+:root { --display: 'Inter', 'Helvetica Neue', Arial, sans-serif; --body: 'Inter', 'Helvetica Neue', Arial, sans-serif; }
+.hero h2 { font-size: clamp(40px, 6.2vw, 84px) !important; font-weight: 800 !important; letter-spacing: -0.045em !important; line-height: 1.04 !important; }
+.logo { font-weight: 800; letter-spacing: -0.02em; }
+.temp .n, .big { font-size: 54px; font-weight: 800; letter-spacing: -0.05em; }
+.temp .u { font: 600 20px/1 var(--display); }
+.ph h2 { font-weight: 800; letter-spacing: -0.03em; }
+/* big faint background icons that move on hover */
+.card .fl-line { width: 156px; height: 156px; top: -26px; right: -26px; opacity: 0.2; transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.pc .fl-line { width: 132px; height: 132px; top: -22px; right: -22px; opacity: 0.18; transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.card .title { padding-right: 0; }
+.pc .pt { padding-right: 52px; }
+.card:hover .fl-line, .pc:hover .fl-line { transform: translate(-8px, 8px) scale(1.05); }
+.fl-line path, .fl-line .mv { transition: transform 0.9s cubic-bezier(0.3, 0.9, 0.3, 1); transform-box: fill-box; transform-origin: center; }
+#lakeCard:hover .fl-line path:nth-child(odd), #pcWeek:hover .fl-line path:nth-child(odd) { transform: translateX(-9px); }
+#lakeCard:hover .fl-line path:nth-child(even), #pcWeek:hover .fl-line path:nth-child(even) { transform: translateX(9px); }
+#riverCard:hover .fl-line path:nth-child(1) { transform: translateY(-5px); }
+#riverCard:hover .fl-line path:nth-child(2) { transform: translateX(-9px); }
+#riverCard:hover .fl-line path:nth-child(3) { transform: translateX(9px); }
+#airCard:hover .ln-sun .mv { transform: rotate(35deg); }
+#airCard:hover .ln-cloud .mv { transform: translateX(-5px); }
+#airCard:hover .ln-rain .mv { transform: translateX(-5px); }
+#beachCard:hover .fl-line .mv, #pcBeach:hover .fl-line .mv { transform: rotate(50deg); }
+
+/* ---- colour world: white cards, navy ink, secondary blue in a dark and a light shade ---- */
+:root, body[data-theme="rain"], body[data-theme="cloudy"], body[data-theme="clear"] {
+  --bg: #ffffff; --ink: #0b2a4a; --ink2: rgba(11, 42, 74, 0.66);
+  --blue: #1f5fa8; --sky: #bcd8f3; --mist: #eaf2fb;
+  --card: #ffffff; --well: #eaf2fb; --soft: rgba(11, 42, 74, 0.08);
+  --acc: #1f5fa8; --orange: #d9531e;
+  color-scheme: light;
+}
+.head, .hero { --bg: #0b2a4a; }
+.cover { background: linear-gradient(90deg, rgba(5, 26, 52, 0.93) 0%, rgba(9, 52, 100, 0.78) 45%, rgba(12, 70, 130, 0) 100%); }
+@media (max-width: 900px) { .cover { background: linear-gradient(180deg, rgba(5, 26, 52, 0.9) 0%, rgba(9, 52, 100, 0.72) 55%, rgba(12, 70, 130, 0.2) 100%); } }
+.alert { background: var(--orange); }
+.alert-ic { color: var(--orange); }
+.sp-panel { border-color: #0b2a4a; }
+.fl-line { color: var(--blue); }
+.card .fl-line { opacity: 0.2; }
+.pc .fl-line { opacity: 0.2; }
+.line, .c7 .l7 { stroke: var(--blue); }
+.area, .c7 .a7 { fill: var(--blue) !important; fill-opacity: 0.12; }
+.pt { fill: var(--blue); }
+.pt.last, .d7 { fill: #fff; stroke: var(--blue); stroke-width: 3; }
+.bar { background: #d9e7f6; }
+.bar i, .mp .trk i { background: var(--blue); }
+.mp .trk { background: #d9e7f6; }
+.dots i { background: var(--blue); }
+.sep { background: var(--sky); opacity: 1; }
+.rowd { border-bottom-color: #dbe7f5; }
+.chip { background: var(--mist); color: var(--ink); }
+.mp.sel { background: var(--mist); border-color: var(--blue); }
+.panel { background: #e6eff9; }
+.pc { --card: #ffffff; --well: #eaf2fb; --soft: rgba(11, 42, 74, 0.08); --ink: #0b2a4a; --ink2: rgba(11, 42, 74, 0.66); }
+.c7 .gl { stroke: var(--ink); stroke-opacity: 0.1; }
+.well { background-image: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: 0.001ms !important; transition-delay: 0s !important; }
+  .rain, .bub, .pp, .sdrop { display: none; }
+  .card:hover { transform: none; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7cc0ff" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#7cc0ff" stop-opacity="0"/>
+    </linearGradient>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5l10 17.5H2L12 3.5z"/><path d="M12 10v5M12 18h.01"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+    <symbol id="i-therm" viewBox="0 0 24 24"><path d="M10 14.8V5a2 2 0 014 0v9.8a4 4 0 11-4 0z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></symbol>
+    <symbol id="i-waves" viewBox="0 0 24 24"><path d="M2 7c3-3 5 3 10 0s7 3 10 0M2 13c3-3 5 3 10 0s7 3 10 0M2 19c3-3 5 3 10 0s7 3 10 0"/></symbol>
+    <linearGradient id="swF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8ff"/><stop offset="1" stop-color="#3b8fd6"/></linearGradient>
+    <symbol id="i-umbrella" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0118 0z"/><path d="M12 12v8a2 2 0 01-4 0"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+  </defs>
+</svg>
+
+<div class="bg" aria-hidden="true">
+  <div class="bg-stack">
+    <div class="bg-img bg-home"></div>
+    <div class="bg-img bg-water"></div>
+  </div>
+  <div class="bg-shade"></div>
+  <div class="cover"></div>
+</div>
+
+<div class="app is-in" id="app">
+  <header class="head">
+    <h1 class="logo reveal" style="--i:0" aria-label="Oh Mon Eau"><span>Oh</span><span>Mon</span><span>Eau!</span></h1>
+    <div class="alert reveal" style="--i:1" role="status">
+      <span class="alert-ic"><svg class="ic"><use href="#i-warn"/></svg></span>
+      <b>Pollution · Allondon</b>
+      <button class="lnk" type="button" data-soon-k="soon_poll" data-i18n="instr">See instruction</button>
+    </div>
+    <div class="head-r reveal" style="--i:2">
+      <button class="pill pill-glass" type="button" data-soon-k="soon_ov"><svg class="ic"><use href="#i-pin"/></svg><span data-i18n="overview">Geneva overview</span></button>
+      <div class="sp-wrap" id="spWrap">
+        <button class="pill pill-white" id="spPill" type="button" aria-expanded="false" aria-haspopup="dialog" aria-controls="spPanel"><span data-i18n="myspot">My spot:</span><b id="spName">Bains des Pâquis</b><svg class="ic sp-chev"><use href="#i-down"/></svg></button>
+        <div class="sp-scrim" id="spScrim"></div>
+        <section class="sp-panel" id="spPanel" role="dialog" aria-label="Choose a spot" data-i18n-attr="aria-label:sp_title">
+          <div class="sp-top">
+            <h2 data-i18n="sp_title">Choose a spot</h2>
+            <label class="sp-field" id="spField">
+              <svg class="ic"><use href="#i-search"/></svg>
+              <input id="spQ" type="text" role="combobox" aria-expanded="true" aria-controls="spList" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="Search a beach or municipality" aria-label="Search a beach or municipality" data-i18n-attr="placeholder:sp_ph;aria-label:sp_ph">
+              <button class="sp-clear" id="spClear" type="button" aria-label="Clear search" data-i18n-attr="aria-label:sp_clear"><svg class="ic"><use href="#i-x"/></svg></button>
+            </label>
+          </div>
+          <div class="sp-scroll" id="spList" role="listbox" aria-label="Spots" data-i18n-attr="aria-label:sp_spots"></div>
+          <p class="sp-foot" data-i18n="sp_foot">Beaches take the temperature of the nearest lake measurement point.</p>
+        </section>
+      </div>
+      <div class="lang" id="lang" role="group" data-i18n-attr="aria-label:lang_aria" aria-label="Language" style="--li:0">
+        <span class="lang-th" aria-hidden="true"></span>
+        <button type="button" data-lang="en" aria-pressed="true" lang="en" aria-label="English">EN</button>
+        <button type="button" data-lang="fr" aria-pressed="false" lang="fr" aria-label="Français">FR</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="heroTitle">
+    <p class="eyebrow reveal" style="--i:2" data-i18n="eyebrow">Today · Wednesday, 7 Oct ’26</p>
+    <h2 class="reveal" id="heroTitle" style="--i:3;margin:0;font:700 clamp(54px,8.2vw,94px)/1.1 var(--display);letter-spacing:-0.04em;text-wrap:balance"><span data-i18n="imat">I’m at</span> <span id="heroTemp">18.0</span>&nbsp;°C</h2>
+    <p class="lead reveal" style="--i:4" data-i18n="lead">The Rhône is low, the Arve is flowing normally. A pollution incident is reported on the Allondon.</p>
+    <p class="src reveal" id="heroSrc" style="--i:5">Lake temperature measured at the Bains des Pâquis at 08:40. Source: badi-info.ch</p>
+  </section>
+
+  <main class="grid">
+    <!-- LAKE -->
+    <div class="cell reveal" style="--i:5">
+      <article class="card" id="lakeCard" data-open>
+        <div class="glass"></div>
+        <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30q11-14 21 0t21 0t21 0t21 0"/><path d="M8 52q11-14 21 0t21 0t21 0t21 0"/><path d="M8 74q11-14 21 0t21 0t21 0t21 0"/></svg></div>
+        <div class="fx up" aria-hidden="true" id="bubbles"></div>
+        <div class="hang fl-ic fl-wave" aria-hidden="true"><svg viewBox="0 0 112 70"><g fill="none" stroke-width="12" stroke-linecap="round"><path d="M10 16q11.5-14 23 0t23 0t23 0t23 0" stroke="#d2e8f4"/><path d="M10 37q11.5-14 23 0t23 0t23 0t23 0" stroke="#7db8d8"/><path d="M10 58q11.5-14 23 0t23 0t23 0t23 0" stroke="#3f82b3"/></g></svg></div>
+        <div class="hang orb" id="orb" aria-hidden="true">
+          <div class="water" id="water">
+            <svg class="wv b" viewBox="0 0 200 14" preserveAspectRatio="none"><path d="M0 7 Q25 0 50 7 T100 7 T150 7 T200 7 V14 H0Z"/></svg>
+            <svg class="wv" viewBox="0 0 200 14" preserveAspectRatio="none"><path d="M0 7 Q25 14 50 7 T100 7 T150 7 T200 7 V14 H0Z"/></svg>
+            <div class="fill"></div>
+          </div>
+          <span class="shine"></span>
+        </div>
+        <div class="title"><span class="ibox"><svg class="ic"><use href="#i-therm"/></svg></span><span class="label" data-i18n="c_lake">Lake temperature</span></div>
+        <div class="info">
+          <div class="temp"><span class="n" id="lakeNum">17.9</span><span class="u">°C</span></div>
+          <div class="rule"></div>
+          <div class="place"><strong class="spn">Bains des Pâquis</strong><span data-i18n="date_long">Wednesday, 7 Oct ’26</span></div>
+        </div>
+        <span class="trend"><svg class="ic"><use href="#i-arrow-down"/></svg>−1.2°C</span>
+        <div>
+          <div class="well" id="lakeWell">
+            <svg class="well-wave b" viewBox="0 0 200 30" preserveAspectRatio="none" aria-hidden="true"><path d="M0 15 Q25 0 50 15 T100 15 T150 15 T200 15 V30 H0Z"/></svg>
+            <svg class="well-wave" viewBox="0 0 200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 24 50 12 T100 12 T150 12 T200 12 V24 H0Z"/></svg>
+            <svg role="img" aria-label="Lake temperature, 5 to 7 October" data-i18n-attr="aria-label:lake_aria">
+              <path class="area"/><path class="line" pathLength="1"/>
+              <circle class="pt p0" r="4" style="--k:0"/><circle class="pt p1" r="4" style="--k:1"/>
+              <circle class="halo" r="9"/><circle class="pt last p2" r="4.5" style="--k:2"/>
+            </svg>
+          </div>
+          <div class="axis"><span data-i18n="d5">5 Oct</span><span data-i18n="d6">6 Oct</span><span data-i18n="d7">7 Oct</span></div>
+        </div>
+        <div class="more"><button type="button" id="lakeMore"><span data-i18n="details">See details</span><svg class="ic"><use href="#i-right"/></svg></button></div>
+      </article>
+    </div>
+
+    <!-- AIR -->
+    <div class="cell reveal" style="--i:6">
+      <article class="card" id="airCard" data-weather="rain">
+        <div class="glass"></div>
+        <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><g class="ln-sun" transform="translate(2 2) scale(3.8)" stroke-width="0.95"><g class="mv"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></g></g><g class="ln-cloud" transform="translate(2 8) scale(3.8)" stroke-width="0.95"><g class="mv"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></g></g><g class="ln-rain" transform="translate(2 2) scale(3.8)" stroke-width="0.95"><g class="mv"><path d="M16 13v8M8 13v8M12 15v8M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></g></g></svg></div>
+        <div class="fx rain" id="rain" aria-hidden="true"></div>
+        <div class="hang sky" aria-hidden="true">
+        <div class="fl-drops"><svg viewBox="0 0 100 48"><line x1="22" y1="4" x2="16" y2="18"/><line x1="46" y1="4" x2="40" y2="18"/><line x1="70" y1="4" x2="64" y2="18"/><line x1="94" y1="4" x2="88" y2="18"/><line x1="34" y1="28" x2="28" y2="42"/><line x1="58" y1="28" x2="52" y2="42"/><line x1="82" y1="28" x2="76" y2="42"/></svg></div>
+          <div class="sun">
+            <svg viewBox="0 0 120 120">
+              <defs><radialGradient id="sunFill" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#ffe7a3"/><stop offset="1" stop-color="#ffb76b"/></radialGradient></defs>
+              <g class="rays" id="rays" stroke="#ffd98a" stroke-width="4" stroke-linecap="round"></g>
+              <circle class="core" cx="60" cy="60" r="24" fill="url(#sunFill)"/>
+            </svg>
+          </div>
+          <div class="cloud">
+            <svg viewBox="0 0 156 84">
+              <defs><linearGradient id="cloudFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c9dcf0"/></linearGradient></defs>
+              <g fill="url(#cloudFill)"><circle cx="44" cy="52" r="24"/><circle cx="80" cy="36" r="30"/><circle cx="113" cy="50" r="24"/><rect x="22" y="50" width="116" height="30" rx="15"/></g>
+            </svg>
+          </div>
+        </div>
+        <div class="title"><span class="ibox"><svg class="ic"><use href="#i-sun"/></svg></span><span class="label" data-i18n="c_air">Air temperature</span></div>
+        <div class="info">
+          <div class="temp"><span class="n cnt" data-count="24.1" data-dec="1">24.1</span><span class="u">°C</span></div>
+          <div class="rule"></div>
+          <div class="place"><strong class="spn">Bains des Pâquis</strong><span>Min 13 °C</span><span>Max 25 °C</span></div>
+        </div>
+        <span class="badge" id="airBadge">Mild / Rainy</span>
+        <div>
+          <div class="well" id="airWell">
+            <svg role="img" aria-label="Air temperature, 5 to 7 October" data-i18n-attr="aria-label:air_aria">
+              <path class="area"/><path class="line" pathLength="1"/>
+              <circle class="pt p0" r="4" style="--k:0"/><circle class="pt p1" r="4" style="--k:1"/>
+              <circle class="halo" r="9"/><circle class="pt last p2" r="4.5" style="--k:2"/>
+            </svg>
+          </div>
+          <div class="axis"><span data-i18n="d5">5 Oct</span><span data-i18n="d6">6 Oct</span><span data-i18n="d7">7 Oct</span></div>
+        </div>
+        <div class="more"><button type="button" data-soon-k="soon_air"><span data-i18n="details">See details</span><svg class="ic"><use href="#i-right"/></svg></button></div>
+      </article>
+    </div>
+
+    <!-- RIVER -->
+    <div class="cell reveal" style="--i:7">
+      <article class="card" id="riverCard">
+        <div class="glass"></div>
+        <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 50L30 18L46 38L58 24L94 50"/><path d="M8 66q11-10 21 0t21 0t21 0t21 0"/><path d="M8 84q11-10 21 0t21 0t21 0t21 0"/></svg></div>
+      <div class="hang fl-ic fl-river" aria-hidden="true"><svg viewBox="0 0 120 72"><defs><clipPath id="rvClip"><rect x="2" y="6" width="116" height="62" rx="22"/></clipPath></defs><rect x="2" y="6" width="116" height="62" rx="22" fill="#9cc088"/><g clip-path="url(#rvClip)" fill="none" stroke-linecap="round"><path d="M-6 64C22 64 26 40 52 38S92 26 126 18" stroke="#5c9cc0" stroke-width="17"/><path d="M-6 64C22 64 26 40 52 38S92 26 126 18" stroke="#9dd0ea" stroke-width="4"/></g><path d="M24 16l8 16H16z" fill="#5f8f5c"/><path d="M96 44l7 14H89z" fill="#5f8f5c"/><path d="M34 52l6 11H28z" fill="#74a36b"/></svg></div>
+      <div class="hang rv-mount" id="rvMount" aria-hidden="true">
+        <svg viewBox="0 0 160 64">
+          <defs>
+            <linearGradient id="mtA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3f0fb"/><stop offset="0.55" stop-color="#a9c7e4"/><stop offset="1" stop-color="#6c93bd"/></linearGradient>
+            <linearGradient id="mtB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9ddf0"/><stop offset="1" stop-color="#7fa3c8"/></linearGradient>
+          </defs>
+          <g class="rv-peaks">
+            <path d="M84 58 L118 18 L158 58Z" fill="url(#mtB)"/>
+            <path d="M118 18 L127 29 L121 27 L117 33 L112 27 L108 29Z" fill="#ffffff" opacity="0.95"/>
+            <path d="M2 58 L54 4 L112 58Z" fill="url(#mtA)"/>
+            <path d="M54 4 L68 20 L62 18 L54 27 L46 18 L40 20Z" fill="#ffffff"/>
+            <path d="M54 4 L112 58 L82 58 L64 30Z" fill="#1d3f66" opacity="0.16"/>
+            <path d="M46 14 L18 52 L26 52 L50 22Z" fill="#ffffff" opacity="0.4"/>
+            <path class="rv-glint" d="M54 10 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6z" fill="#ffffff"/>
+          </g>
+        </svg>
+        <div class="rv-pool">
+          <svg class="rv-pw rv-b" viewBox="0 0 320 40" preserveAspectRatio="none"><path d="M0 14 Q40 2 80 14 T160 14 T240 14 T320 14 V40 H0Z"/></svg>
+          <svg class="rv-pw rv-f" viewBox="0 0 320 40" preserveAspectRatio="none"><path d="M0 14 Q40 26 80 14 T160 14 T240 14 T320 14 V40 H0Z"/></svg>
+          <svg class="rv-pw rv-l" viewBox="0 0 320 40" preserveAspectRatio="none"><path d="M0 16 Q40 6 80 16 T160 16 T240 16 T320 16 V40 H0Z"/></svg>
+          <span class="rv-spark" style="--x:30px;--dl:0s"></span><span class="rv-spark" style="--x:74px;--dl:-1.1s"></span><span class="rv-spark" style="--x:118px;--dl:-2s"></span>
+        </div>
+      </div>
+        <div class="title"><span class="ibox"><svg class="ic"><use href="#i-waves"/></svg></span><span class="label" data-i18n="c_river">River Flow</span></div>
+        <div class="river">
+          <div class="flow">
+            <div class="info">
+              <div class="temp"><span class="n cnt" data-count="108" data-dec="0">108</span><span class="u">m³/s</span></div>
+              <div class="rule"></div>
+              <span class="nm" data-i18n="rhone">Rhône River</span>
+            </div>
+            <p class="meta" data-i18n="avg78">24 h average · 78% of normal</p>
+            <div class="bar" style="--sd:2.2s"><i style="--p:78%"></i></div>
+          </div>
+          <hr class="sep">
+          <div class="flow">
+            <div class="info">
+              <div class="temp"><span class="n cnt" data-count="43" data-dec="0">43</span><span class="u">m³/s</span></div>
+              <div class="rule"></div>
+              <span class="nm" data-i18n="arve">Arve River</span>
+            </div>
+            <p class="meta" data-i18n="avg46">24 h average · 46% of normal</p>
+            <div class="bar" style="--sd:5.2s"><i style="--p:46%"></i></div>
+          </div>
+        </div>
+        <div class="more"><button type="button" data-soon-k="soon_river"><span data-i18n="details">See details</span><svg class="ic"><use href="#i-right"/></svg></button></div>
+      </article>
+    </div>
+
+    <!-- BEACHES -->
+    <div class="cell reveal" style="--i:8">
+      <article class="card" id="beachCard">
+        <div class="glass"></div>
+        <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(28 50 50)"><g class="mv"><circle cx="50" cy="50" r="40"/><path d="M50 10C26 32 26 68 50 90"/><path d="M50 10C74 32 74 68 50 90"/><path d="M50 10V90"/></g></g></svg></div>
+        <div class="hang fl-ic fl-ball" aria-hidden="true"><svg viewBox="0 0 72 72"><path d="M36 36L44.8 3.2A34 34 0 0 1 68.8 27.2Z" fill="#e8742a"/><path d="M36 36L68.8 27.2A34 34 0 0 1 60.0 60.0Z" fill="#f7f3ea"/><path d="M36 36L60.0 60.0A34 34 0 0 1 27.2 68.8Z" fill="#4f8fc4"/><path d="M36 36L27.2 68.8A34 34 0 0 1 3.2 44.8Z" fill="#f7f3ea"/><path d="M36 36L3.2 44.8A34 34 0 0 1 12.0 12.0Z" fill="#e3be4b"/><path d="M36 36L12.0 12.0A34 34 0 0 1 44.8 3.2Z" fill="#f7f3ea"/><circle cx="36" cy="36" r="6" fill="#f7f3ea"/><circle cx="36" cy="36" r="3" fill="#e3be4b"/></svg></div>
+        <div class="hang parasol" aria-hidden="true">
+          <svg viewBox="0 0 64 56">
+            <defs><clipPath id="dome"><path d="M2 28a30 26 0 0 1 60 0z"/></clipPath></defs>
+            <line x1="32" y1="28" x2="32" y2="56" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+            <g class="canopy">
+              <g clip-path="url(#dome)">
+                <rect x="2" y="0" width="12" height="30" fill="#ffffff"/><rect x="14" y="0" width="12" height="30" fill="#e1661e"/><rect x="26" y="0" width="12" height="30" fill="#ffffff"/><rect x="38" y="0" width="12" height="30" fill="#e1661e"/><rect x="50" y="0" width="12" height="30" fill="#ffffff"/>
+              </g>
+              <circle cx="32" cy="2.5" r="2.2" fill="#ffffff"/>
+            </g>
+          </svg>
+        </div>
+        <div class="title"><span class="ibox"><svg class="ic"><use href="#i-umbrella"/></svg></span><span class="label" data-i18n="c_beach">Open Beaches</span></div>
+        <div class="beach-body">
+          <div>
+            <div class="big"><span class="cnt" data-count="28" data-dec="0">28</span><span class="dim">/</span><span class="dim">30</span></div>
+            <p data-i18n="beaches_open">Beaches currently open</p>
+          </div>
+          <div class="dots" id="dots" aria-hidden="true"></div>
+          <hr class="sep">
+          <p class="mute" data-i18n="last_test">Last test: 15 September</p>
+        </div>
+        <div class="more"><button type="button" data-soon-k="soon_beach"><span data-i18n="details">See details</span><svg class="ic"><use href="#i-right"/></svg></button></div>
+      </article>
+    </div>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pTitle" inert>
+  <header class="ph">
+    <span class="pinbox" aria-hidden="true"><svg class="ic ph-pin"><use href="#i-pin"/></svg></span>
+    <span class="vr"></span>
+    <div class="names"><h2 id="pTitle" class="spn">Bains des Pâquis</h2><p data-i18n="date_long">Wednesday, 7 Oct ’26</p></div>
+    <button class="close" id="pClose" type="button" aria-label="Close panel" data-i18n-attr="aria-label:p_close"><svg class="ic"><use href="#i-x"/></svg></button>
+  </header>
+  <div class="pgrid">
+    <article class="pc" id="pcWater" data-band="1" style="--i:0">
+      <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(10 2) scale(3.9)" stroke-width="0.92"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></g></svg></div>
+      <div class="pfx fade" id="pfx1" aria-hidden="true"></div>
+      <div class="hang thermo" aria-hidden="true">
+        <svg viewBox="0 0 40 156">
+          <defs>
+            <linearGradient id="tTube" x1="0" x2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.55" stop-color="#eaf3fb"/><stop offset="1" stop-color="#c3d7ea"/></linearGradient>
+            <radialGradient id="tBulb" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#c3d7ea"/></radialGradient>
+            <linearGradient id="tMerc" x1="0" x2="1"><stop offset="0" style="stop-color:var(--mcl,#6fbbe8)"/><stop offset="1" style="stop-color:var(--mc,#2b84bf)"/></linearGradient>
+            <radialGradient id="tMercB" cx="0.35" cy="0.3" r="0.85"><stop offset="0" style="stop-color:var(--mcl,#6fbbe8)"/><stop offset="1" style="stop-color:var(--mc,#2b84bf)"/></radialGradient>
+          </defs>
+          <rect x="9" y="1" width="22" height="134" rx="11" fill="url(#tTube)"/>
+          <circle cx="20" cy="138" r="15" fill="url(#tBulb)"/>
+          <rect x="15" y="10" width="10" height="126" rx="5" fill="#0b2a43" fill-opacity="0.1"/>
+          <g class="mercwrap"><rect class="pcol" x="16" y="14" width="8" height="124" rx="4" fill="url(#tMerc)"/></g>
+          <circle cx="20" cy="138" r="10" fill="url(#tMercB)"/>
+          <g stroke="#ffffff" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round"><line x1="34" x2="39" y1="24" y2="24"/><line x1="34" x2="37" y1="42" y2="42"/><line x1="34" x2="39" y1="60" y2="60"/><line x1="34" x2="37" y1="78" y2="78"/><line x1="34" x2="39" y1="96" y2="96"/><line x1="34" x2="37" y1="114" y2="114"/></g>
+          <rect x="12" y="8" width="3" height="100" rx="1.5" fill="#ffffff" fill-opacity="0.85"/>
+          <ellipse cx="15.5" cy="133" rx="3.4" ry="2.2" fill="#ffffff" fill-opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="inn">
+        <div class="pt"><span class="pic"><svg class="ic"><use href="#i-therm"/></svg></span><h3 data-i18n="p_water">Water temperature</h3></div>
+        <div class="reading">
+          <div class="temp"><span class="n" id="pTemp">17.9</span><span class="u">°C</span></div>
+          <span class="stat" id="pStat"><i></i><span id="pStatT">Cool</span></span>
+        </div>
+        <p class="quote" id="pQuote">« Enter gradually and get out as soon as you feel cold. »</p>
+        <div class="scale" id="scale">
+          <div class="bands"><i style="--c:#bfe7ff" data-r="10–15 °C"></i><i style="--c:#80c9e4" data-r="15–20 °C"></i><i style="--c:#a5cd8c" data-r="20–25 °C"></i><i style="--c:#edc36e" data-r="25–30 °C"></i></div>
+          <div class="ticks"><span style="left:0%">10</span><span style="left:25%">15</span><span style="left:50%">20</span><span style="left:75%">25</span><span style="left:100%">30 °C</span></div>
+          <div class="bnames" id="bnames"><span data-i18n="b0">Very cold</span><span data-i18n="b1">Cool</span><span data-i18n="b2">Pleasant</span><span data-i18n="b3">Warm</span></div>
+          <svg class="ptr" viewBox="0 0 13 30" aria-hidden="true"><path d="M0 0H13L6.5 9Z" fill="#fff"/><rect x="5.5" y="9" width="2" height="21" fill="#fff"/></svg>
+        </div>
+        <p class="note" data-i18n="band_note">Temperature bands are indicative. Below 15 °C, cold shock becomes dangerous.</p>
+        <p class="src2"><span data-i18n="source">Source:</span> <a href="https://www.badi-info.ch" target="_blank" rel="noopener">badi-info.ch</a></p>
+      </div>
+    </article>
+
+    <article class="pc" id="pcWeek" style="--i:1">
+      <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30q11-14 21 0t21 0t21 0t21 0"/><path d="M8 52q11-14 21 0t21 0t21 0t21 0"/><path d="M8 74q11-14 21 0t21 0t21 0t21 0"/></svg></div>
+      <div class="pfx" aria-hidden="true">
+        <svg class="pwv b" viewBox="0 0 200 30" preserveAspectRatio="none"><path d="M0 15 Q25 0 50 15 T100 15 T150 15 T200 15 V30 H0Z"/></svg>
+        <svg class="pwv" viewBox="0 0 200 24" preserveAspectRatio="none"><path d="M0 12 Q25 24 50 12 T100 12 T150 12 T200 12 V24 H0Z"/></svg>
+      </div>
+      <div class="hang fl-ic fl-wave" aria-hidden="true"><svg viewBox="0 0 112 70"><g fill="none" stroke-width="12" stroke-linecap="round"><path d="M10 16q11.5-14 23 0t23 0t23 0t23 0" stroke="#d2e8f4"/><path d="M10 37q11.5-14 23 0t23 0t23 0t23 0" stroke="#7db8d8"/><path d="M10 58q11.5-14 23 0t23 0t23 0t23 0" stroke="#3f82b3"/></g></svg></div>
+      <div class="hang surf" aria-hidden="true">
+        <div class="pool">
+          <svg class="psw b" viewBox="0 0 320 40" preserveAspectRatio="none"><path d="M0 14 Q40 2 80 14 T160 14 T240 14 T320 14 V40 H0Z"/></svg>
+          <svg class="psw" viewBox="0 0 320 40" preserveAspectRatio="none"><path d="M0 14 Q40 26 80 14 T160 14 T240 14 T320 14 V40 H0Z"/></svg>
+        </div>
+        <span class="sdrop" style="--x:36px;--dl:0s"></span><span class="sdrop" style="--x:78px;--dl:-0.9s"></span><span class="sdrop" style="--x:116px;--dl:-1.7s"></span>
+      </div>
+      <div class="inn">
+        <div class="pt"><span class="pic"><svg class="ic"><use href="#i-waves"/></svg></span><h3 id="wkTitle">Last 7 days · Pâquis</h3></div>
+        <div class="c7" id="c7"><div class="tip" id="c7tip"></div>
+          <svg role="img" aria-label="Water temperature over the last 7 days" data-i18n-attr="aria-label:c7aria">
+            <defs><linearGradient id="fill7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0ff" stop-opacity="0.35"/><stop offset="1" stop-color="#7cc0ff" stop-opacity="0.05"/></linearGradient><clipPath id="clip7"><path class="a7c"/></clipPath><linearGradient id="glintFill" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+            <line class="gl g0"/><line class="gl g1"/><line class="gl g2"/>
+            <text class="y0" x="9">20.2</text><text class="y1" x="9">18.9</text><text class="y2" x="9">17.6</text>
+            <path class="a7"/><g clip-path="url(#clip7)"><rect class="glint" x="-80" y="0" width="80" height="167" fill="url(#glintFill)"/></g><path class="l7" pathLength="1"/><line class="guide"/>
+            <circle class="h7" r="9"/><circle class="d7" r="4.5"/><circle class="gdot" r="4.5"/>
+            <text class="lastlab" style="font-weight:700;font-size:11px" text-anchor="end">17.6 °C</text>
+            <g class="days"></g>
+          </svg>
+        </div>
+        <p class="cap" data-i18n="cap4">The four measurement points</p>
+        <div class="mps" id="mps"></div>
+      </div>
+    </article>
+
+    <article class="pc" id="pcBeach" data-beach="open" style="--i:2">
+      <div class="fl-line" aria-hidden="true"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(28 50 50)"><g class="mv"><circle cx="50" cy="50" r="40"/><path d="M50 10C26 32 26 68 50 90"/><path d="M50 10C74 32 74 68 50 90"/><path d="M50 10V90"/></g></g></svg></div>
+      <div class="hang scene" aria-hidden="true">
+        <span class="bshadow"></span>
+        <svg viewBox="0 0 132 76">
+          <defs>
+            <linearGradient id="sSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e6b8"/><stop offset="1" stop-color="#e6c37c"/></linearGradient>
+            <linearGradient id="sPole" x1="0" x2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9c8d8"/></linearGradient>
+            <radialGradient id="sFin" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#e0a52a"/></radialGradient>
+            <linearGradient id="sOr" x1="0" x2="1"><stop offset="0" stop-color="#ff8a45"/><stop offset="1" stop-color="#d9531a"/></linearGradient>
+            <linearGradient id="sWh" x1="0" x2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3ecf5"/></linearGradient>
+            <linearGradient id="sShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/><stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#0b2a43" stop-opacity="0.2"/></linearGradient>
+            <clipPath id="sDome"><path d="M14 34 C14 18 30 8 52 8 S90 18 90 34 Q83 38 76 34 Q69 38 62 34 Q55 38 48 34 Q41 38 34 34 Q27 38 20 34 Q17 38 14 34 Z"/></clipPath>
+          </defs>
+          <path d="M2 66 C14 56 34 56 52 62 S96 58 112 62 S126 64 130 66 V76 H2 Z" fill="url(#sSand)"/>
+          <path d="M10 66 C22 59 38 59 52 64" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round"/>
+          <ellipse class="cast" cx="52" cy="64" rx="34" ry="5" fill="#8d6a35" fill-opacity="0.2"/>
+          <g class="sway2">
+            <rect x="50.5" y="8" width="3" height="56" rx="1.5" fill="url(#sPole)"/>
+            <g class="pcanopy">
+              <g clip-path="url(#sDome)">
+                <rect x="14" y="6" width="12.7" height="34" fill="url(#sWh)"/><rect x="26.7" y="6" width="12.7" height="34" fill="url(#sOr)"/><rect x="39.4" y="6" width="12.7" height="34" fill="url(#sWh)"/><rect x="52" y="6" width="12.7" height="34" fill="url(#sOr)"/><rect x="64.7" y="6" width="12.7" height="34" fill="url(#sWh)"/><rect x="77.4" y="6" width="12.7" height="34" fill="url(#sOr)"/>
+                <rect x="14" y="6" width="76" height="34" fill="url(#sShade)"/>
+              </g>
+              <ellipse cx="36" cy="16" rx="8" ry="3" fill="#ffffff" fill-opacity="0.45" transform="rotate(-22 36 16)"/>
+            </g>
+            <ellipse class="strap" cx="52" cy="27" rx="5" ry="2.2" fill="#0b2a43" fill-opacity="0.45"/>
+            <circle cx="52" cy="6.5" r="3" fill="url(#sFin)"/>
+          </g>
+        </svg>
+        <span class="ballw"><span class="ballh"><span class="ballr"></span><span class="gloss"></span></span></span>
+      </div>
+      <div class="inn">
+        <div class="pt"><span class="pic"><svg class="ic"><use href="#i-umbrella"/></svg></span><h3 id="bchTitle">Beach · Bains des Pâquis</h3></div>
+        <div class="bhead"><strong id="bTitle">Beach open</strong><span class="stat soft" id="bOpen"><i style="--dot:#8fe3b0"></i><span id="bOpenT">Open</span></span></div>
+        <div class="rows">
+          <div class="rowd"><span data-i18n="sup">Supervision</span><b data-i18n="lifeg">Lifeguarded</b></div>
+          <div class="rowd"><span data-i18n="acc">Access</span><b data-i18n="acc_v">During opening hours</b></div>
+          <div class="rowd last"><span data-i18n="canton">Canton assessment</span><span class="stat" id="bCanton"><i style="--dot:#8fe3b0"></i><span id="bCantonT">Swimming allowed</span></span></div>
+        </div>
+        <p class="svc" data-i18n="svc">Services:</p>
+        <div class="chips">
+          <span class="chip" style="--i:0" data-i18n="ch0">Toilets</span><span class="chip" style="--i:1" data-i18n="ch1">Showers</span><span class="chip" style="--i:2" data-i18n="ch2">Food</span><span class="chip" style="--i:3" data-i18n="ch3">Lockers</span><span class="chip" style="--i:4" data-i18n="ch4">Wheelchair accessible</span>
+        </div>
+        <a class="dir" href="https://www.google.com/maps/dir/?api=1&destination=Bains+des+P%C3%A2quis+Gen%C3%A8ve" target="_blank" rel="noopener"><span data-i18n="dir">Direction</span><svg class="ic"><use href="#i-right"/></svg></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="Cards" data-i18n-attr="aria-label:tabs_nav" style="--ti:0">
+  <span class="tb-slider" aria-hidden="true"></span>
+  <button class="tb" id="tb0" role="tab" aria-selected="true" aria-label="Lake temperature" data-i18n-attr="aria-label:c_lake">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M10 14.8V5a2 2 0 014 0v9.8a4 4 0 11-4 0z"/><g class="g-therm"><path class="tfill" d="M12 9v7" stroke-width="2.4"/></g></svg>
+  </button>
+  <button class="tb" id="tb1" role="tab" aria-selected="false" aria-label="Air temperature" data-i18n-attr="aria-label:c_air">
+    <svg class="ic" viewBox="0 0 24 24"><g class="g-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/></g></svg>
+  </button>
+  <button class="tb" id="tb2" role="tab" aria-selected="false" aria-label="River flow" data-i18n-attr="aria-label:c_river">
+    <svg class="ic" viewBox="0 0 24 24"><g class="g-wave"><path d="M2 7c3-3 5 3 10 0s7 3 10 0M2 13c3-3 5 3 10 0s7 3 10 0M2 19c3-3 5 3 10 0s7 3 10 0"/></g></svg>
+  </button>
+  <button class="tb" id="tb3" role="tab" aria-selected="false" aria-label="Open beaches" data-i18n-attr="aria-label:c_beach">
+    <svg class="ic" viewBox="0 0 24 24"><g class="g-umb"><path d="M3 12a9 9 0 0118 0z"/><path d="M12 12v8a2 2 0 01-4 0"/></g></svg>
+  </button>
+</nav>
+
+<div class="dock" id="dock">
+  <button class="dock-btn" id="dockBtn" type="button" aria-expanded="false" aria-controls="dockBody" aria-label="Demo controls" data-i18n-attr="aria-label:demo"><svg class="ic"><use href="#i-sliders"/></svg></button>
+  <div class="dock-body" id="dockBody" hidden>
+    <p class="dock-h" data-i18n="demo">Demo controls</p>
+    <fieldset>
+      <legend data-i18n="wx">Weather</legend>
+      <div class="seg" id="seg">
+        <button type="button" data-w="rain" aria-pressed="true" data-i18n="rain">Rain</button>
+        <button type="button" data-w="cloudy" aria-pressed="false" data-i18n="cloudy">Cloudy</button>
+        <button type="button" data-w="clear" aria-pressed="false" data-i18n="clear">Clear</button>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend data-i18n="beach_t">Beach</legend>
+      <div class="seg" id="beachSeg">
+        <button type="button" data-b="open" aria-pressed="true" data-i18n="st_open">Open</button>
+        <button type="button" data-b="closed" aria-pressed="false" data-i18n="st_closed">Closed</button>
+      </div>
+    </fieldset>
+    <div>
+      <label for="lakeRange"><span data-i18n="c_lake">Lake temperature</span><output id="lakeOut" for="lakeRange">17.9 °C</output></label>
+      <input id="lakeRange" type="range" min="10" max="30" step="0.1" value="17.9">
+    </div>
+    <button class="rp" id="replay" type="button" data-i18n="replay">Replay intro</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  var NS = 'http://www.w3.org/2000/svg';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- language (EN / FR) ---- */
+  var I18N = {
+ "en": {
+  "myspot": "My spot:",
+  "overview": "Geneva overview",
+  "instr": "See instruction",
+  "sp_title": "Choose a spot",
+  "sp_ph": "Search a beach or municipality",
+  "sp_clear": "Clear search",
+  "sp_spots": "Spots",
+  "sp_foot": "Beaches take the temperature of the nearest lake measurement point.",
+  "grp_st": "Lake measurement points",
+  "grp_be": "Beaches",
+  "none_t": "No spot found",
+  "none_s": "Try another beach or municipality.",
+  "measpoint": "measurement point",
+  "measured": "measured at {st}",
+  "geneva": "Geneva",
+  "eyebrow": "Today · Wednesday, 7 Oct ’26",
+  "date_long": "Wednesday, 7 Oct ’26",
+  "imat": "I’m at",
+  "lead": "The Rhône is low, the Arve is flowing normally. A pollution incident is reported on the Allondon.",
+  "hero_src": "Lake temperature measured at {st} at {time}. Source: badi-info.ch",
+  "d5": "5 Oct",
+  "d6": "6 Oct",
+  "d7": "7 Oct",
+  "c_lake": "Lake temperature",
+  "c_air": "Air temperature",
+  "c_river": "River Flow",
+  "c_beach": "Open Beaches",
+  "lake_aria": "Lake temperature, 5 to 7 October",
+  "air_aria": "Air temperature, 5 to 7 October",
+  "details": "See details",
+  "rhone": "Rhône River",
+  "arve": "Arve River",
+  "avg78": "24 h average · 78% of normal",
+  "avg46": "24 h average · 46% of normal",
+  "w_rain": "Mild / Rainy",
+  "w_cloudy": "Mild / Cloudy",
+  "w_clear": "Warm / Pleasant",
+  "beaches_open": "Beaches currently open",
+  "last_test": "Last test: 15 September",
+  "p_close": "Close panel",
+  "p_water": "Water temperature",
+  "b0": "Very cold",
+  "b1": "Cool",
+  "b2": "Pleasant",
+  "b3": "Warm",
+  "q0": "Cold shock risk. Stay in the shallows and keep it very short.",
+  "q1": "Enter gradually and get out as soon as you feel cold.",
+  "q2": "Comfortable for a long swim. Enjoy it.",
+  "q3": "Warm and inviting. Drink water and mind the sun.",
+  "band_note": "Temperature bands are indicative. Below 15 °C, cold shock becomes dangerous.",
+  "source": "Source:",
+  "wk": "Last 7 days",
+  "c7aria": "Water temperature over the last 7 days",
+  "cap4": "The four measurement points",
+  "beach_t": "Beach",
+  "bt_open": "Beach open",
+  "bt_closed": "Beach closed",
+  "st_open": "Open",
+  "st_closed": "Closed",
+  "sw_ok": "Swimming allowed",
+  "sw_no": "Swimming prohibited",
+  "sup": "Supervision",
+  "lifeg": "Lifeguarded",
+  "acc": "Access",
+  "acc_v": "During opening hours",
+  "canton": "Canton assessment",
+  "svc": "Services:",
+  "ch0": "Toilets",
+  "ch1": "Showers",
+  "ch2": "Food",
+  "ch3": "Lockers",
+  "ch4": "Wheelchair accessible",
+  "dir": "Direction",
+  "tabs_nav": "Cards",
+  "demo": "Demo controls",
+  "wx": "Weather",
+  "rain": "Rain",
+  "cloudy": "Cloudy",
+  "clear": "Clear",
+  "replay": "Replay intro",
+  "lang_aria": "Language",
+  "days": "We,Th,Fr,Sa,Su,Mo,Tu",
+  "soon_poll": "The pollution instructions page is not part of this prototype yet.",
+  "soon_ov": "The Geneva overview is not part of this prototype yet.",
+  "soon_air": "The air temperature details are the next panel to build.",
+  "soon_river": "The river flow details are the next panel to build.",
+  "soon_beach": "The beach details are the next panel to build."
+ },
+ "fr": {
+  "myspot": "Mon spot :",
+  "overview": "Aperçu de Genève",
+  "instr": "Voir les consignes",
+  "sp_title": "Choisir un lieu",
+  "sp_ph": "Rechercher une plage ou une commune",
+  "sp_clear": "Effacer la recherche",
+  "sp_spots": "Lieux",
+  "sp_foot": "Les plages reprennent la température du point de mesure du lac le plus proche.",
+  "grp_st": "Points de mesure du lac",
+  "grp_be": "Plages",
+  "none_t": "Aucun lieu trouvé",
+  "none_s": "Essayez une autre plage ou une autre commune.",
+  "measpoint": "point de mesure",
+  "measured": "mesuré {st}",
+  "geneva": "Genève",
+  "eyebrow": "Aujourd’hui · mercredi 7 oct. ’26",
+  "date_long": "mercredi 7 oct. ’26",
+  "imat": "Je suis à",
+  "lead": "Le Rhône est bas, l’Arve coule normalement. Un incident de pollution est signalé sur l’Allondon.",
+  "hero_src": "Température du lac mesurée {st} à {time}. Source : badi-info.ch",
+  "d5": "5 oct.",
+  "d6": "6 oct.",
+  "d7": "7 oct.",
+  "c_lake": "Température du lac",
+  "c_air": "Température de l’air",
+  "c_river": "Débit des rivières",
+  "c_beach": "Plages ouvertes",
+  "lake_aria": "Température du lac, du 5 au 7 octobre",
+  "air_aria": "Température de l’air, du 5 au 7 octobre",
+  "details": "Voir les détails",
+  "rhone": "Le Rhône",
+  "arve": "L’Arve",
+  "avg78": "Moyenne sur 24 h · 78 % de la normale",
+  "avg46": "Moyenne sur 24 h · 46 % de la normale",
+  "w_rain": "Doux / Pluvieux",
+  "w_cloudy": "Doux / Nuageux",
+  "w_clear": "Chaud / Agréable",
+  "beaches_open": "Plages actuellement ouvertes",
+  "last_test": "Dernier test : 15 septembre",
+  "p_close": "Fermer le panneau",
+  "p_water": "Température de l’eau",
+  "b0": "Très froide",
+  "b1": "Fraîche",
+  "b2": "Agréable",
+  "b3": "Chaude",
+  "q0": "Risque de choc thermique. Restez près du bord et gardez la baignade très courte.",
+  "q1": "Entrez progressivement et sortez dès que vous avez froid.",
+  "q2": "Agréable pour une longue nage. Profitez-en.",
+  "q3": "Chaude et accueillante. Buvez de l’eau et protégez-vous du soleil.",
+  "band_note": "Les tranches de température sont indicatives. En dessous de 15 °C, le choc thermique devient dangereux.",
+  "source": "Source :",
+  "wk": "7 derniers jours",
+  "c7aria": "Température de l’eau sur les 7 derniers jours",
+  "cap4": "Les quatre points de mesure",
+  "beach_t": "Plage",
+  "bt_open": "Plage ouverte",
+  "bt_closed": "Plage fermée",
+  "st_open": "Ouverte",
+  "st_closed": "Fermée",
+  "sw_ok": "Baignade autorisée",
+  "sw_no": "Baignade interdite",
+  "sup": "Surveillance",
+  "lifeg": "Surveillée",
+  "acc": "Accès",
+  "acc_v": "Pendant les heures d’ouverture",
+  "canton": "Évaluation cantonale",
+  "svc": "Services :",
+  "ch0": "Toilettes",
+  "ch1": "Douches",
+  "ch2": "Restauration",
+  "ch3": "Casiers",
+  "ch4": "Accessible en fauteuil roulant",
+  "dir": "Itinéraire",
+  "tabs_nav": "Cartes",
+  "demo": "Commandes de démo",
+  "wx": "Météo",
+  "rain": "Pluie",
+  "cloudy": "Nuageux",
+  "clear": "Dégagé",
+  "replay": "Rejouer l’intro",
+  "lang_aria": "Langue",
+  "days": "Me,Je,Ve,Sa,Di,Lu,Ma",
+  "soon_poll": "La page des consignes de pollution ne fait pas encore partie de ce prototype.",
+  "soon_ov": "L’aperçu de Genève ne fait pas encore partie de ce prototype.",
+  "soon_air": "Les détails de la température de l’air sont le prochain panneau à construire.",
+  "soon_river": "Les détails du débit des rivières sont le prochain panneau à construire.",
+  "soon_beach": "Les détails des plages sont le prochain panneau à construire."
+ }
+};
+  var LANG = 'en';
+  function tr(k, v) {
+    var s = I18N[LANG][k]; if (s === undefined) s = I18N.en[k]; if (s === undefined) return k;
+    if (v) s = s.replace(/\{(\w+)\}/g, function (m, n) { return v[n] !== undefined ? v[n] : m; });
+    return s;
+  }
+  function WD() { return tr('days').split(','); }
+  function stRef(st, hero) {
+    var n = STN_NAME[st];
+    if (LANG === 'fr') return st === 'paquis' ? 'aux ' + n : 'à ' + n;
+    return (hero && st === 'paquis' ? 'the ' : '') + n;
+  }
+  function placeL(p) { return p === 'Geneva' ? tr('geneva') : p; }
+  function pwhere(p) { return (p.cant === 'ge' ? tr('geneva') : 'Vaud') + ' · ' + p.time; }
+
+  /* ---- mock data (what a live feed would supply) ---- */
+  var state = { lake: 17.9, weather: 'rain', beach: 'open', spot: 'paquis', spotOff: 0 };
+  function lakeNow() { return state.lake + state.spotOff; }
+  var DATA = {
+    lakeSeries: [1.2, 0.6, 0],               // offsets from the current lake value, 5 -> 7 Oct
+    airSeries: [22.4, 19.2, 24.1],
+    weekOffsets: [2.6, 2.1, 1.3, 0.8, 0.4, 0.2, 0],
+    weekDays: ['We', 'Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu'],
+    points: [
+      { name: 'Pâquis', cant: 'ge', time: '08:40', off: 0.1, sel: true },
+      { name: 'Ouchy', cant: 'vd', time: '08:10', off: -0.3 },
+      { name: 'Pully', cant: 'vd', time: '08:10', off: -0.5 },
+      { name: 'Buchillon', cant: 'vd', time: '08:20', off: -0.8 }
+    ],
+    rhoneFlow: 108,
+    arveFlow: 43
+  };
+  var BANDS = [
+    { n: 'Very cold', max: 15, sb: '#e6f4ff', sf: '#216ba6', c: '#bfe7ff', q: 'Cold shock risk. Stay in the shallows and keep it very short.' },
+    { n: 'Cool', max: 20, sb: '#e6f4ff', sf: '#216ba6', c: '#80c9e4', q: 'Enter gradually and get out as soon as you feel cold.' },
+    { n: 'Pleasant', max: 25, sb: '#e6ffed', sf: '#21a671', c: '#a5cd8c', q: 'Comfortable for a long swim. Enjoy it.' },
+    { n: 'Warm', max: 1e9, sb: '#fff3dc', sf: '#a1691a', c: '#edc36e', q: 'Warm and inviting. Drink water and mind the sun.' }
+  ];
+  
+  var PX = [
+    { mc: '#3d9bd6', mcl: '#a9dcf8', dot: '#9fd8ff' },
+    { mc: '#2b84bf', mcl: '#8fcdf0', dot: '#7cc0ff' },
+    { mc: '#5b9a45', mcl: '#a9dc8f', dot: '#8fe3b0' },
+    { mc: '#e2902c', mcl: '#f6cc7a', dot: '#ffd27a' }
+  ];
+  BANDS.forEach(function (bb, k) { bb.mc = PX[k].mc; bb.mcl = PX[k].mcl; bb.dot = PX[k].dot; });
+  var c7s = null;
+  function bandOf(t) { for (var i = 0; i < 3; i++) { if (t < BANDS[i].max) return i; } return 3; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  /* ---- count-up ---- */
+  function countTo(el, to, dec, dur) {
+    if (el._raf) cancelAnimationFrame(el._raf);
+    if (reduce || !dur) { el.textContent = to.toFixed(dec); return; }
+    var t0 = null;
+    function step(t) {
+      if (t0 === null) t0 = t;
+      var p = Math.min((t - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = (to * e).toFixed(dec);
+      if (p < 1) el._raf = requestAnimationFrame(step);
+    }
+    el.textContent = (0).toFixed(dec);
+    el._raf = requestAnimationFrame(step);
+  }
+
+  /* ---- generated decoration ---- */
+  (function build() {
+    var i, el, rain = $('#rain');
+    for (i = 0; i < 30; i++) {
+      el = document.createElement('span');
+      var dur = 0.8 + Math.random() * 0.7;
+      el.className = 'drop';
+      el.style.left = (52 + Math.random() * 42) + '%';
+      el.style.setProperty('--h', (12 + Math.random() * 12).toFixed(1) + 'px');
+      el.style.setProperty('--o', (0.35 + Math.random() * 0.45).toFixed(2));
+      el.style.setProperty('--d', dur.toFixed(2) + 's');
+      el.style.setProperty('--dl', (-Math.random() * dur).toFixed(2) + 's');
+      rain.appendChild(el);
+    }
+    var rays = $('#rays');
+    for (i = 0; i < 12; i++) {
+      var l = document.createElementNS(NS, 'line');
+      l.setAttribute('x1', 60); l.setAttribute('x2', 60);
+      l.setAttribute('y1', 14); l.setAttribute('y2', i % 2 ? 22 : 28);
+      l.setAttribute('transform', 'rotate(' + (i * 30) + ' 60 60)');
+      rays.appendChild(l);
+    }
+    var bub = $('#bubbles');
+    for (i = 0; i < 8; i++) {
+      el = document.createElement('span');
+      var d = 5 + Math.random() * 4;
+      el.className = 'bub';
+      el.style.setProperty('--x', (6 + Math.random() * 86).toFixed(1) + '%');
+      el.style.setProperty('--s', (5 + Math.random() * 7).toFixed(1) + 'px');
+      el.style.setProperty('--d', d.toFixed(2) + 's');
+      el.style.setProperty('--dl', (-Math.random() * d).toFixed(2) + 's');
+      bub.appendChild(el);
+    }
+    var dots = $('#dots');
+    for (i = 0; i < 30; i++) {
+      el = document.createElement('i');
+      el.style.setProperty('--n', i);
+      if (i >= 28) el.className = 'off';
+      dots.appendChild(el);
+    }
+    // river scene: wave height and speed follow the Rhône and Arve flow
+    var rvm = $('#rvMount');
+    rvm.style.setProperty('--kR', clamp(DATA.rhoneFlow / 400, 0.08, 1).toFixed(2));
+    rvm.style.setProperty('--kA', clamp(DATA.arveFlow / 250, 0.08, 1).toFixed(2));
+    rvm.style.setProperty('--rs', clamp(6 - (DATA.rhoneFlow + DATA.arveFlow) / 650 * 4, 1.8, 6).toFixed(2) + 's');
+    // measurement point rows
+    var mps = $('#mps');
+    DATA.points.forEach(function (p, k) {
+      var row = document.createElement('div');
+      row.className = 'mp' + (p.sel ? ' sel' : '');
+      row.style.setProperty('--i', k);
+      row.innerHTML = '<div class="where"><b>' + p.name + '</b><span>' + pwhere(p) + '</span></div><div class="trk"><i></i></div><span class="val"></span>';
+      mps.appendChild(row);
+    });
+    // 7 day labels
+    var days = $('#c7 .days');
+    DATA.weekDays.forEach(function () { var t = document.createElementNS(NS, 'text'); t.setAttribute('text-anchor', 'middle'); days.appendChild(t); });
+  })();
+
+  /* ---- thermometer particles ---- */
+  (function () {
+    var fx = $('#pfx1');
+    for (var k = 0; k < 16; k++) {
+      var p = document.createElement('span'), d = 5 + Math.random() * 4;
+      p.className = 'pp';
+      p.style.setProperty('--x', (4 + Math.random() * 90).toFixed(1) + '%');
+      p.style.setProperty('--s', (5 + Math.random() * 5).toFixed(1) + 'px');
+      p.style.setProperty('--d', d.toFixed(2) + 's');
+      p.style.setProperty('--dl', (-Math.random() * d).toFixed(2) + 's');
+      fx.appendChild(p);
+    }
+  })();
+
+  /* ---- charts ---- */
+  function spark(well, vals, k) {
+    var svg = $('svg[role="img"]', well), w = well.clientWidth || 300, h = 120;
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    var mean = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+    var xs = [16, w / 2, w - 16];
+    var ys = vals.map(function (v) { return clamp(60 - (v - mean) * k, 22, 98); });
+    var d = 'M' + xs[0] + ' ' + ys[0] + ' L' + xs[1] + ' ' + ys[1] + ' L' + xs[2] + ' ' + ys[2];
+    $('.line', svg).setAttribute('d', d);
+    $('.area', svg).setAttribute('d', d + ' L' + xs[2] + ' ' + h + ' L' + xs[0] + ' ' + h + ' Z');
+    [0, 1, 2].forEach(function (i) {
+      var c = $('.p' + i, svg); c.setAttribute('cx', xs[i]); c.setAttribute('cy', ys[i]);
+    });
+    var hz = $('.halo', svg); hz.setAttribute('cx', xs[2]); hz.setAttribute('cy', ys[2]);
+  }
+  function chart7() {
+    var box = $('#c7'), svg = $('svg', box), w = box.clientWidth || 340;
+    svg.setAttribute('viewBox', '0 0 ' + w + ' 167');
+    var last = lakeNow() - 0.3;
+    var vals = DATA.weekOffsets.map(function (o) { return last + o; });
+    var max = vals[0], min = vals[6];
+    var x0 = 38, x1 = w - 28, step = (x1 - x0) / 6;
+    function y(v) { return 26 + (max - v) / (max - min) * 96; }
+    var pts = vals.map(function (v, i) { return [x0 + i * step, y(v)]; });
+    var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+    $('.l7', svg).setAttribute('d', d);
+    var ad = d + ' L' + x1 + ' 122 L' + x0 + ' 122 Z';
+    $('.a7', svg).setAttribute('d', ad); $('.a7c', svg).setAttribute('d', ad);
+    var dot = $('.d7', svg); dot.setAttribute('cx', pts[6][0]); dot.setAttribute('cy', pts[6][1]);
+    var hz = $('.h7', svg); hz.setAttribute('cx', pts[6][0]); hz.setAttribute('cy', pts[6][1]);
+    box.style.setProperty('--cw', w + 'px');
+    c7s = { pts: pts, vals: vals, x0: x0, step: step };
+    svg.setAttribute('aria-label', tr('c7aria') + ': ' + vals.map(function (v, i) { return WD()[i] + ' ' + v.toFixed(1); }).join(', '));
+    var lab = $('.lastlab', svg); lab.setAttribute('x', pts[6][0] + 6); lab.setAttribute('y', pts[6][1] - 12); lab.textContent = vals[6].toFixed(1) + ' °C';
+    [26, 74, 122].forEach(function (gy, i) {
+      var g = $('.g' + i, svg); g.setAttribute('x1', x0); g.setAttribute('x2', x1); g.setAttribute('y1', gy); g.setAttribute('y2', gy);
+      var t = $('.y' + i, svg); t.setAttribute('y', gy + 3);
+      t.textContent = (i === 0 ? max : i === 1 ? (max + min) / 2 : min).toFixed(1);
+    });
+    $$('.days text', svg).forEach(function (t, i) { t.setAttribute('x', x0 + i * step); t.setAttribute('y', 152); t.textContent = WD()[i]; });
+  }
+
+  /* ---- data-driven render ---- */
+  var heroTemp = $('#heroTemp'), lakeNum = $('#lakeNum'), pTemp = $('#pTemp');
+  function render(opts) {
+    opts = opts || {};
+    var t = lakeNow(), b = BANDS[bandOf(t)];
+    if (!opts.keepNumbers) {
+      heroTemp.textContent = (t + 0.1).toFixed(1);
+      lakeNum.textContent = t.toFixed(1);
+      pTemp.textContent = t.toFixed(1);
+    }
+    // water orb: level, colour and wave speed follow the temperature
+    var fill = clamp(0.25 + (t - 10) / 20 * 0.55, 0.15, 0.85);
+    var orbW = $('#water');
+    orbW.style.setProperty('--lvl', ((1 - fill) * 100).toFixed(1) + '%');
+    orbW.style.setProperty('--c', b.c);
+    orbW.style.setProperty('--wd', clamp(6 - (t - 10) / 20 * 3.6, 2.4, 6).toFixed(2) + 's');
+    var lakeVals = DATA.lakeSeries.map(function (o) { return t + o; });
+    spark($('#lakeWell'), lakeVals, 22);
+    spark($('#airWell'), DATA.airSeries, 8);
+    // panel
+    var stat = $('#pStat');
+    $('i', stat).style.setProperty('--dot', b.dot);
+    $('#pStatT').textContent = tr('b' + bandOf(t));
+    $('#pQuote').textContent = '«\u00a0' + tr('q' + bandOf(t)) + '\u00a0»';
+    $('#scale').style.setProperty('--pos', clamp((t - 10) / 20 * 100, 0, 100).toFixed(1) + '%');
+    $$('#bnames span').forEach(function (s, i) { s.classList.toggle('on', i === bandOf(t)); });
+    // thermometer: mercury level, colour and particle type follow the temperature; cold shock warning
+    var pw = $('#pcWater');
+    pw.setAttribute('data-band', bandOf(t));
+    pw.style.setProperty('--lv', (0.194 + clamp((t - 10) / 20, 0, 1) * 0.725).toFixed(3));
+    pw.style.setProperty('--mc', b.mc); pw.style.setProperty('--mcl', b.mcl);
+    pw.classList.toggle('cold', t < 15);
+    chart7();
+    $$('#mps .mp').forEach(function (row, i) {
+      var v = state.lake + DATA.points[i].off;
+      $('.where span', row).textContent = pwhere(DATA.points[i]);
+      $('.val', row).textContent = v.toFixed(1) + ' °C';
+      $('.trk i', row).style.setProperty('--p', clamp((v - 10) / 20 * 100, 2, 100).toFixed(1) + '%');
+    });
+    $('#lakeOut').textContent = state.lake.toFixed(1) + ' °C';
+  }
+  function setWeather(w) {
+    state.weather = w;
+    var card = $('#airCard'), badge = $('#airBadge');
+    card.setAttribute('data-weather', w);
+    document.body.setAttribute('data-theme', w);
+    badge.classList.add('swap');
+    setTimeout(function () { badge.textContent = tr('w_' + w); badge.classList.remove('swap'); }, 200);
+    $$('#seg button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-w') === w)); });
+  }
+
+  var beachT = null;
+  function setBeach(v) {
+    state.beach = v;
+    var open = v === 'open', dot = open ? '#8fe3b0' : '#ff8f8f';
+    $('#pcBeach').setAttribute('data-beach', v);
+    $('#bTitle').textContent = tr(open ? 'bt_open' : 'bt_closed');
+    $('#bOpenT').textContent = tr(open ? 'st_open' : 'st_closed');
+    $('#bCantonT').textContent = tr(open ? 'sw_ok' : 'sw_no');
+    $$('#bOpen i, #bCanton i').forEach(function (x) { x.style.setProperty('--dot', dot); });
+    $$('#beachSeg button').forEach(function (x) { x.setAttribute('aria-pressed', String(x.getAttribute('data-b') === v)); });
+  }
+  $$('#beachSeg button').forEach(function (x) { x.addEventListener('click', function () { setBeach(x.getAttribute('data-b')); }); });
+
+  /* ---- intro ---- */
+  var app = $('#app');
+  function intro() {
+    countTo(heroTemp, lakeNow() + 0.1, 1, 1500);
+    countTo(lakeNum, lakeNow(), 1, 1300);
+    $$('.cnt').forEach(function (el) { countTo(el, parseFloat(el.getAttribute('data-count')), parseInt(el.getAttribute('data-dec'), 10) || 0, 1300); });
+  }
+  function replay() {
+    app.classList.remove('is-in');
+    void app.offsetWidth;
+    app.classList.add('is-in');
+    intro();
+  }
+
+  /* ---- panel ---- */
+  var panel = $('#panel'), lastFocus = null;
+  function openPanel() {
+    if (document.body.classList.contains('panel-open')) return;
+    lastFocus = document.activeElement;
+    panel.classList.remove('p-in'); void panel.offsetWidth; panel.classList.add('p-in');
+    document.body.classList.add('panel-open');
+    panel.inert = false; app.inert = true;
+    chart7();
+    countTo(pTemp, lakeNow(), 1, 1200);
+    // parasol starts furled and opens as the panel arrives
+    if (state.beach === 'open' && !reduce) {
+      var pb = $('#pcBeach'); pb.setAttribute('data-beach', 'closed');
+      clearTimeout(beachT); beachT = setTimeout(function () { pb.setAttribute('data-beach', state.beach); }, 1100);
+    }
+    setTimeout(function () { $('#pClose').focus({ preventScroll: true }); }, 450);
+  }
+  function closePanel() {
+    if (!document.body.classList.contains('panel-open')) return;
+    document.body.classList.remove('panel-open');
+    panel.inert = true; app.inert = false;
+    setTimeout(function () { panel.classList.remove('p-in'); }, 900);
+    var f = lastFocus && lastFocus.focus ? lastFocus : $('#lakeMore');
+    f.focus({ preventScroll: true });
+  }
+  $('#lakeCard').addEventListener('click', openPanel);
+  $('#pClose').addEventListener('click', closePanel);
+  $('#scrim').addEventListener('click', closePanel);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      if (document.body.classList.contains('panel-open')) closePanel();
+      else if (!$('#dockBody').hidden) toggleDock(false);
+    }
+  });
+
+  /* ---- 7 day chart tooltip ---- */
+  var c7 = $('#c7'), c7tip = $('#c7tip');
+  function c7move(e) {
+    if (!c7s) return;
+    var r = c7.getBoundingClientRect(), x = e.clientX - r.left;
+    var i = clamp(Math.round((x - c7s.x0) / c7s.step), 0, 6);
+    var px = c7s.pts[i][0], py = c7s.pts[i][1], svg = $('svg', c7);
+    var g = $('.guide', svg); g.setAttribute('x1', px); g.setAttribute('x2', px); g.setAttribute('y1', 26); g.setAttribute('y2', 122);
+    var gd = $('.gdot', svg); gd.setAttribute('cx', px); gd.setAttribute('cy', py);
+    c7tip.textContent = WD()[i] + ' · ' + c7s.vals[i].toFixed(1) + ' °C';
+    c7tip.style.left = px + 'px'; c7tip.style.top = py + 'px';
+    c7.classList.add('hov');
+  }
+  c7.addEventListener('pointermove', c7move);
+  c7.addEventListener('pointerdown', c7move);
+  c7.addEventListener('pointerleave', function () { c7.classList.remove('hov'); });
+
+  /* ---- placeholders, dock, toast ---- */
+  var toastEl = $('#toast'), toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+  }
+  $$('[data-soon-k]').forEach(function (b) {
+    b.addEventListener('click', function (e) { e.stopPropagation(); toast(tr(b.getAttribute('data-soon-k'))); });
+  });
+  function toggleDock(open) {
+    var body = $('#dockBody');
+    body.hidden = !open;
+    $('#dockBtn').setAttribute('aria-expanded', String(open));
+  }
+  $('#dockBtn').addEventListener('click', function () { toggleDock($('#dockBody').hidden); });
+  $$('#seg button').forEach(function (b) { b.addEventListener('click', function () { setWeather(b.getAttribute('data-w')); }); });
+  $('#lakeRange').addEventListener('input', function (e) {
+    state.lake = parseFloat(e.target.value);
+    [heroTemp, lakeNum, pTemp].forEach(function (el) { if (el._raf) cancelAnimationFrame(el._raf); });
+    render();
+  });
+  $('#replay').addEventListener('click', replay);
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { render({ keepNumbers: true }); }, 120); });
+
+  /* ---- spot picker ---- */
+  var SP_ST = { paquis: 0, ouchy: 1, pully: 2, buchillon: 3 };   // index into DATA.points
+  var SPOTS = [
+    { id: 'paquis', kind: 'station', st: 'paquis' },
+    { id: 'ouchy', kind: 'station', st: 'ouchy', place: 'Lausanne (VD)' },
+    { id: 'pully', kind: 'station', st: 'pully', place: 'Pully (VD)' },
+    { id: 'buchillon', kind: 'station', st: 'buchillon', place: 'Buchillon (VD)' },
+    { id: 'geneve-plage', kind: 'beach', name: 'Genève-Plage', place: 'Geneva', st: 'paquis', km: 2.5, open: true },
+    { id: 'eaux-vives', kind: 'beach', name: 'Plage publique des Eaux-Vives', place: 'Geneva', st: 'paquis', km: 2, open: true },
+    { id: 'baby-plage', kind: 'beach', name: 'Baby-Plage', place: 'Geneva', st: 'paquis', km: 2, open: true },
+    { id: 'bellevue', kind: 'beach', name: 'Plage de Bellevue', place: 'Bellevue', st: 'paquis', km: 7, open: true },
+    { id: 'genthod', kind: 'beach', name: 'Plage de Genthod', place: 'Genthod', st: 'paquis', km: 6, open: true },
+    { id: 'versoix', kind: 'beach', name: 'Plage de Versoix', place: 'Versoix', st: 'paquis', km: 10, open: false },
+    { id: 'corsier', kind: 'beach', name: 'Plage de Corsier-Port', place: 'Corsier', st: 'paquis', km: 8, open: true },
+    { id: 'anieres', kind: 'beach', name: 'Plage d’Anières', place: 'Anières', st: 'paquis', km: 11, open: true },
+    { id: 'hermance', kind: 'beach', name: 'Plage d’Hermance', place: 'Hermance', st: 'paquis', km: 15, open: false },
+    { id: 'bellerive', kind: 'beach', name: 'Bellerive Plage', place: 'Lausanne (VD)', st: 'ouchy', km: 1, open: true },
+    { id: 'vidy', kind: 'beach', name: 'Plage de Vidy', place: 'Lausanne (VD)', st: 'ouchy', km: 3, open: true },
+    { id: 'morges', kind: 'beach', name: 'Plage de Morges', place: 'Morges (VD)', st: 'buchillon', km: 5, open: true },
+    { id: 'rolle', kind: 'beach', name: 'Plage de Rolle', place: 'Rolle (VD)', st: 'buchillon', km: 8, open: true }
+  ];
+  var STN_NAME = { paquis: 'Bains des Pâquis', ouchy: 'Ouchy', pully: 'Pully', buchillon: 'Buchillon' };
+  SPOTS.forEach(function (sp) {
+    if (sp.kind === 'station') { sp.name = STN_NAME[sp.st]; sp.place = sp.place || 'Geneva'; sp.km = 0; sp.open = null; }
+    sp.hay = spNorm(sp.name + ' ' + sp.place + ' ' + placeL0(sp.place));
+  });
+  function placeL0(p) { return p === 'Geneva' ? 'Genève' : p; }
+  function spSub(sp) { return placeL(sp.place) + ' · ' + (sp.kind === 'station' ? tr('measpoint') : tr('measured', { st: stRef(sp.st) })); }
+  function spNorm(x) { return x.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, '').toLowerCase(); }
+  function spEsc(x) { return x.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function spTemp(sp) { return state.lake + DATA.points[SP_ST[sp.st]].off; }
+  function spHl(text, query) {
+    if (!query) return spEsc(text);
+    var n = spNorm(text), i = n.indexOf(query);
+    if (i < 0 || n.length !== text.length) return spEsc(text);
+    return spEsc(text.slice(0, i)) + '<mark>' + spEsc(text.slice(i, i + query.length)) + '</mark>' + spEsc(text.slice(i + query.length));
+  }
+  var spWrap = $('#spWrap'), spPanel = $('#spPanel'), spPill = $('#spPill'), spQ = $('#spQ'), spList = $('#spList'), spField = $('#spField');
+  var spState = { q: '', act: -1 }, spShown = [], spIsOpen = false;
+  function spOptHtml(sp, k, query) {
+    var meta = '<span class="sp-meta"><span class="t">' + spTemp(sp).toFixed(1) + '°</span>' +
+      (sp.open === null ? '' : '<span class="st' + (sp.open ? '' : ' closed') + '"><i></i>' + tr(sp.open ? 'st_open' : 'st_closed') + '</span>') + '</span>';
+    return '<div class="sp-opt' + (sp.id === state.spot ? ' sel' : '') + '" role="option" id="spo-' + sp.id + '" data-id="' + sp.id + '" aria-selected="' + (sp.id === state.spot) + '" style="--i:' + k + '">' +
+      '<span class="sp-det"><b>' + spHl(sp.name, query) + '</b><span class="sp-sub">' + spHl(spSub(sp), query) + '</span></span>' + meta +
+      '<svg class="ic sp-tick" aria-hidden="true"><use href="#i-check"/></svg></div>';
+  }
+  function spRender() {
+    var query = spNorm(spState.q.trim());
+    var res = SPOTS.filter(function (sp) { return !query || sp.hay.indexOf(query) >= 0; });
+    var html = '', k = 0;
+    spShown = [];
+    [['station', tr('grp_st')], ['beach', tr('grp_be')]].forEach(function (g) {
+      var items = res.filter(function (sp) { return sp.kind === g[0]; });
+      if (!items.length) return;
+      html += '<div class="sp-grp" role="group" aria-label="' + g[1] + '"><h3>' + g[1] + (query ? ' <small>' + items.length + '</small>' : '') + '</h3>';
+      items.forEach(function (sp) { html += spOptHtml(sp, k++, query); spShown.push(sp); });
+      html += '</div>';
+    });
+    if (!spShown.length) html = '<div class="sp-empty"><b>' + tr('none_t') + '</b>' + tr('none_s') + '</div>';
+    spList.innerHTML = html;
+    spState.act = query && spShown.length ? 0 : -1;
+    spPaint(false);
+    spField.classList.toggle('has', !!spState.q);
+  }
+  function spPaint(scroll) {
+    var opts = $$('.sp-opt', spList);
+    opts.forEach(function (o, i) { o.classList.toggle('act', i === spState.act); });
+    var a = opts[spState.act];
+    if (a) { spQ.setAttribute('aria-activedescendant', a.id); if (scroll) a.scrollIntoView({ block: 'nearest' }); } else { spQ.removeAttribute('aria-activedescendant'); }
+  }
+  function spOpen() {
+    if (spIsOpen) return;
+    spIsOpen = true; spState.q = ''; spQ.value = '';
+    spRender();
+    document.body.classList.add('sp-open');
+    spPanel.classList.add('open'); spWrap.classList.add('open'); spPill.setAttribute('aria-expanded', 'true');
+    setTimeout(function () { spQ.focus({ preventScroll: true }); var sel = $('.sp-opt.sel', spList); if (sel) sel.scrollIntoView({ block: 'nearest' }); }, 60);
+  }
+  function spClose(back) {
+    if (!spIsOpen) return;
+    spIsOpen = false;
+    document.body.classList.remove('sp-open');
+    spPanel.classList.remove('open'); spWrap.classList.remove('open'); spPill.setAttribute('aria-expanded', 'false');
+    if (back) spPill.focus({ preventScroll: true });
+  }
+  spPill.addEventListener('click', function () { spIsOpen ? spClose(true) : spOpen(); });
+  $('#spScrim').addEventListener('click', function () { spClose(true); });
+  document.addEventListener('mousedown', function (e) { if (spIsOpen && !e.target.closest('#spWrap') && window.innerWidth > 640) spClose(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && spIsOpen) { e.preventDefault(); spClose(true); } });
+  spQ.addEventListener('input', function () { spState.q = spQ.value; spRender(); });
+  $('#spClear').addEventListener('click', function () { spQ.value = ''; spState.q = ''; spRender(); spQ.focus(); });
+  spQ.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!spShown.length) return;
+      spState.act = e.key === 'ArrowDown' ? (spState.act + 1) % spShown.length : (spState.act <= 0 ? spShown.length - 1 : spState.act - 1);
+      spPaint(true);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (spState.act >= 0 && spShown[spState.act]) chooseSpot(spShown[spState.act].id);
+    }
+  });
+  spList.addEventListener('click', function (e) { var o = e.target.closest('.sp-opt'); if (o) chooseSpot(o.getAttribute('data-id')); });
+  spList.addEventListener('mousemove', function (e) {
+    var o = e.target.closest('.sp-opt'); if (!o) return;
+    var i = $$('.sp-opt', spList).indexOf(o); if (i !== spState.act) { spState.act = i; spPaint(false); }
+  });
+
+  function paintSpotLabels() {
+    var sp = SPOTS.filter(function (x) { return x.id === state.spot; })[0], pt = DATA.points[SP_ST[sp.st]];
+    $('#spName').textContent = sp.name;
+    $$('.spn').forEach(function (el) { el.textContent = sp.name; });
+    $('#heroSrc').textContent = tr('hero_src', { st: stRef(sp.st, true), time: pt.time });
+    $('#wkTitle').textContent = tr('wk') + ' · ' + pt.name;
+    $('#bchTitle').textContent = tr('beach_t') + ' · ' + sp.name;
+  }
+  function setLang(l, user) {
+    LANG = l === 'fr' ? 'fr' : 'en';
+    document.documentElement.lang = LANG;
+    $$('[data-i18n]').forEach(function (el) { el.textContent = tr(el.getAttribute('data-i18n')); });
+    $$('[data-i18n-attr]').forEach(function (el) {
+      el.getAttribute('data-i18n-attr').split(';').forEach(function (p) { var a = p.split(':'); el.setAttribute(a[0], tr(a[1])); });
+    });
+    $$('#lang button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-lang') === LANG)); });
+    $('#lang').style.setProperty('--li', LANG === 'fr' ? 1 : 0);
+    $('#airBadge').textContent = tr('w_' + state.weather);
+    setBeach(state.beach);
+    paintSpotLabels();
+    render({ keepNumbers: true });
+    if (spIsOpen) spRender();
+    if (user) { try { localStorage.setItem('ome-lang', LANG); } catch (e) {} }
+  }
+  $$('#lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang'), true); }); });
+  // on phones the switch sits in the logo row
+  (function () {
+    var mq = window.matchMedia('(max-width: 640px)'), lg = $('#lang'), hr = $('.head-r'), hd = $('.head'), logo = $('.logo');
+    function place() { if (mq.matches) hd.insertBefore(lg, logo.nextSibling); else hr.appendChild(lg); }
+    if (mq.addEventListener) mq.addEventListener('change', place); else mq.addListener(place);
+    place();
+  })();
+  function initialLang() {
+    var q = /[?&]lang=(fr|en)/.exec(location.search); if (q) return q[1];
+    try { var s = localStorage.getItem('ome-lang'); if (s === 'fr' || s === 'en') return s; } catch (e) {}
+    return /^fr/i.test(navigator.language || '') ? 'fr' : 'en';
+  }
+
+  // choosing a spot swaps the lake data and labels; air and rivers stay Geneva-wide
+  function chooseSpot(id) {
+    var sp = SPOTS.filter(function (x) { return x.id === id; })[0];
+    state.spot = id;
+    state.spotOff = DATA.points[SP_ST[sp.st]].off - 0.1;
+    paintSpotLabels();
+    $$('#mps .mp').forEach(function (row, k) { row.classList.toggle('sel', k === SP_ST[sp.st]); });
+    setBeach(sp.open === false ? 'closed' : 'open');
+    [heroTemp, lakeNum, pTemp].forEach(function (el) { if (el._raf) cancelAnimationFrame(el._raf); });
+    render({ keepNumbers: true });
+    pTemp.textContent = lakeNow().toFixed(1);
+    countTo(heroTemp, lakeNow() + 0.1, 1, 1000);
+    countTo(lakeNum, lakeNow(), 1, 1000);
+    app.classList.remove('spot-swap'); void app.offsetWidth; app.classList.add('spot-swap');
+    spClose(true);
+  }
+
+  /* ---- mobile tab bar: one card at a time ---- */
+  (function () {
+    var mq = window.matchMedia('(max-width: 640px)');
+    var cells = $$('.grid .cell'), tabsEl = $('#tabs'), tbs = $$('.tb'), grid = $('.grid');
+    var cur = 0, swiped = 0;
+    cells.forEach(function (c, k) { c.setAttribute('role', 'tabpanel'); c.setAttribute('aria-labelledby', 'tb' + k); });
+    function recount(i) {
+      if (i === 0) { if (lakeNum._raf) cancelAnimationFrame(lakeNum._raf); countTo(lakeNum, lakeNow(), 1, 900); }
+      $$('.cnt', cells[i]).forEach(function (el) { countTo(el, parseFloat(el.getAttribute('data-count')), parseInt(el.getAttribute('data-dec'), 10) || 0, 900); });
+    }
+    function show(i, dir, count) {
+      cells.forEach(function (c, k) { c.classList.toggle('tab-on', k === i); });
+      cells[i].style.setProperty('--tdir', dir);
+      cur = i;
+      tabsEl.style.setProperty('--ti', i);
+      tbs.forEach(function (t, k) { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+      if (count) {
+        recount(i);
+        // bring the card up under the status bar when it sits low on the screen
+        var top = cells[i].getBoundingClientRect().top;
+        if (top > window.innerHeight * 0.45 || top < 0) window.scrollTo({ top: Math.max(0, top + window.pageYOffset - 96), behavior: reduce ? 'auto' : 'smooth' });
+      }
+    }
+    function go(i) {
+      i = Math.max(0, Math.min(cells.length - 1, i));
+      if (i === cur) return;
+      show(i, i > cur ? 1 : -1, true);
+    }
+    function apply() {
+      document.body.classList.toggle('tabs-on', mq.matches);
+      if (mq.matches) show(cur, 1, false);
+    }
+    tbs.forEach(function (t, k) {
+      t.tabIndex = k === 0 ? 0 : -1;
+      t.addEventListener('click', function () { go(k); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); tbs[cur].focus(); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); tbs[cur].focus(); }
+      });
+    });
+    // swipe the card sideways; a swipe must not open the lake panel
+    var sx = null, sy = null;
+    grid.addEventListener('pointerdown', function (e) { sx = e.clientX; sy = e.clientY; });
+    grid.addEventListener('pointerup', function (e) {
+      if (sx === null || !mq.matches) { sx = null; return; }
+      var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) { swiped = Date.now(); go(cur + (dx < 0 ? 1 : -1)); }
+    });
+    grid.addEventListener('pointercancel', function () { sx = null; });
+    grid.addEventListener('click', function (e) { if (Date.now() - swiped < 400) { e.stopPropagation(); e.preventDefault(); } }, true);
+    if (mq.addEventListener) mq.addEventListener('change', apply); else mq.addListener(apply);
+    apply();
+  })();
+
+  /* ---- go ---- */
+  render();
+  setWeather('rain');
+  setBeach('open');
+  setLang(initialLang(), false);
+  intro();
+})();
+</script>
